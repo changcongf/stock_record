@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xyz.fcc.stock.record.mapper.CompanyRecordMapper">
+    <!-- 插入一条 t_company_record 记录 -->
+    <insert id="insertCompanyRecord" parameterType="xyz.fcc.stock.record.entity.CompanyRecord">
+        INSERT INTO t_company_record
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="currentDay != null">current_day,</if>
+            <if test="company != null and company != ''">company,</if>
+            <if test="content != null">content,</if>
+            <if test="info != null">info,</if>
+            <!-- id, create_time, update_time 通常不由客户端插入或由数据库自动生成 -->
+            <!-- 如果需要插入 id，请取消下面这行的注释 -->
+            <!-- <if test="id != null">id,</if> -->
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="currentDay != null">#{currentDay},</if>
+            <if test="company != null and company != ''">#{company},</if>
+            <if test="content != null">#{content},</if>
+            <if test="info != null">#{info},</if>
+            <!-- create_time 和 update_time 通常由数据库默认值或触发器处理 -->
+            <!-- 如果需要插入 id，请取消下面这行的注释 -->
+            <!-- <if test="id != null">#{id},</if> -->
+        </trim>
+        ON DUPLICATE KEY UPDATE
+        content = VALUES(content),
+        update_time = CURRENT_TIMESTAMP
+    </insert>
+
+    <!-- 根据 company, currentDay 范围和 content 关键字动态分页查询 t_company_record 记录 -->
+    <select id="selectCompanyRecordByConditionWithPaging" parameterType="map" resultType="xyz.fcc.stock.record.entity.CompanyRecord">
+        SELECT
+        id,
+        current_day AS currentDay,
+        company,
+        content,
+        create_time AS createTime,
+        update_time AS updateTime,
+        info
+        FROM t_company_record
+        <where>
+            1=1
+            <if test="company != null and company != ''">
+                AND company = #{company}
+            </if>
+            <if test="startDate != null and endDate != null">
+                AND current_day BETWEEN #{startDate} AND #{endDate}
+            </if>
+            <if test="startDate != null and endDate == null">
+                AND current_day <![CDATA[ >= ]]> #{startDate}
+            </if>
+            <if test="startDate == null and endDate != null">
+                AND current_day <![CDATA[ <= ]]> #{endDate}
+            </if>
+            <if test="content != null and content != ''">
+                AND content LIKE CONCAT('%', #{content}, '%')
+            </if>
+            <!-- 如果 info 也需要关键字查询，可以加上类似下面的条件 -->
+            <!--
+            <if test="info != null and info != ''">
+                AND info LIKE CONCAT('%', #{info}, '%')
+            </if>
+            -->
+        </where>
+        ORDER BY current_day DESC -- 假设按日期倒序排列
+        LIMIT #{offset}, #{limit}
+    </select>
+
+</mapper>

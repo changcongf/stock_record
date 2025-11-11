@@ -1,0 +1,353 @@
+openapi: 3.0.3
+info:
+  title: 复盘系统
+  description: 复盘系统用于管理每日和公司级别的复盘记录。
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+    description: 本地开发服务器
+paths:
+  /api/daily-records:
+    post:
+      summary: 创建或更新每日记录
+      description: |
+        用于创建新的每日记录，如果 `current_day` 已存在，则更新该记录的 `content`。
+        通常用于每日复盘信息的录入。
+      tags:
+        - DailyRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentDay:
+                  type: string
+                  format: date
+                  example: "2025-11-06"
+                content:
+                  type: string
+                  example: "今日市场整体表现平稳，无重大波动事件。"
+              required:
+                - currentDay
+                - content
+            example:
+              currentDay: "2025-11-06"
+              content: "今日市场整体表现平稳，无重大波动事件。"
+      responses:
+        '200':
+          description: 操作成功，返回影响的行数。
+          content:
+            text/plain:
+              schema:
+                type: integer
+                example: 1
+              example: 1
+        '400':
+          description: 请求参数错误或格式不正确。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: 服务器内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: 分页查询每日记录
+      description: 根据可选的日期范围和内容关键字查询每日记录列表，并支持分页。
+      tags:
+        - DailyRecord
+      parameters:
+        - name: startDate
+          in: query
+          description: "查询的开始日期 (格式: YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+            example: "2025-11-01"
+        - name: endDate
+          in: query
+          description: "查询的结束日期 (格式: YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+            example: "2025-11-06"
+        - name: content
+          in: query
+          description: 用于模糊搜索内容的关键字
+          required: false
+          schema:
+            type: string
+            example: "市场"
+        - name: pageNum
+          in: query
+          description: 页码 (从1开始)
+          required: true
+          schema:
+            type: integer
+            default: 1
+            example: 1
+        - name: pageSize
+          in: query
+          description: 每页大小
+          required: true
+          schema:
+            type: integer
+            default: 10
+            example: 10
+      responses:
+        '200':
+          description: 查询成功，返回 DailyRecordDTO 列表。
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DailyRecordDTO'
+              example:
+                - id: 1
+                  currentDay: "2025-11-06"
+                  content: "今日市场整体表现平稳，无重大波动事件。"
+                  info: "系统自动生成"
+                - id: 2
+                  currentDay: "2025-11-05"
+                  content: "某股票出现异动..."
+                  info: "手动录入"
+        '400':
+          description: 请求参数错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: 服务器内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/company-records:
+    post:
+      summary: 创建或更新公司记录
+      description: |
+        用于创建新的公司记录，如果 `company` 和 `current_day` 联合唯一索引已存在，则更新该记录的 `content` 和 `info`。
+        通常用于特定公司每日复盘信息的录入。
+      tags:
+        - CompanyRecord
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                currentDay:
+                  type: string
+                  format: date
+                  example: "2025-11-06"
+                company:
+                  type: string
+                  example: "AAPL"
+                content:
+                  type: string
+                  example: "苹果公司今日股价上涨 2.5%。"
+              required:
+                - currentDay
+                - company
+                - content
+            example:
+              currentDay: "2025-11-06"
+              company: "AAPL"
+              content: "苹果公司今日股价上涨 2.5%。"
+      responses:
+        '200':
+          description: 操作成功，返回影响的行数。
+          content:
+            text/plain:
+              schema:
+                type: integer
+                example: 1
+              example: 1
+        '400':
+          description: 请求参数错误或格式不正确。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: 服务器内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    get:
+      summary: 分页查询公司记录
+      description: 根据可选的公司名称、日期范围和内容关键字查询公司记录列表，并支持分页。
+      tags:
+        - CompanyRecord
+      parameters:
+        - name: company
+          in: query
+          description: 公司名称或标识
+          required: true
+          schema:
+            type: string
+            example: "AAPL"
+        - name: startDate
+          in: query
+          description: "查询的开始日期 (格式: YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+            example: "2025-11-01"
+        - name: endDate
+          in: query
+          description: "查询的结束日期 (格式: YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+            example: "2025-11-06"
+        - name: content
+          in: query
+          description: 用于模糊搜索内容的关键字
+          required: false
+          schema:
+            type: string
+            example: "股价"
+        - name: pageNum
+          in: query
+          description: 页码 (从1开始)
+          required: true
+          schema:
+            type: integer
+            default: 1
+            example: 1
+        - name: pageSize
+          in: query
+          description: 每页大小
+          required: true
+          schema:
+            type: integer
+            default: 10
+            example: 10
+      responses:
+        '200':
+          description: 查询成功，返回 CompanyRecordDTO 列表。
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CompanyRecordDTO'
+              example:
+                - id: 1
+                  currentDay: "2025-11-06"
+                  company: "AAPL"
+                  content: "苹果公司今日股价上涨 2.5%。"
+                  info: "实时监控数据"
+                - id: 2
+                  currentDay: "2025-11-06"
+                  company: "GOOGL"
+                  content: "谷歌发布新产品..."
+                  info: "新闻摘要"
+        '400':
+          description: 请求参数错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: 服务器内部错误。
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  schemas:
+    DailyRecordDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 记录的唯一ID (由数据库自动生成)
+          example: 1
+        currentDay:
+          type: string
+          format: date
+          description: "记录的日期 (格式: YYYY-MM-DD)"
+          example: "2025-11-06"
+        content:
+          type: string
+          description: 记录的主要内容
+          example: "今日市场整体表现平稳，无重大波动事件。"
+        info:
+          type: string
+          description: 附加信息
+          example: "系统自动生成"
+      required:
+        - currentDay
+        - content
+    CompanyRecordDTO:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+          description: 记录的唯一ID (由数据库自动生成)
+          example: 1
+        currentDay:
+          type: string
+          format: date
+          description: "记录的日期 (格式: YYYY-MM-DD)"
+          example: "2025-11-06"
+        company:
+          type: string
+          description: 公司名称或标识
+          example: "AAPL"
+        content:
+          type: string
+          description: 记录的主要内容
+          example: "苹果公司今日股价上涨 2.5%。"
+        info:
+          type: string
+          description: 附加信息
+          example: "实时监控数据"
+      required:
+        - currentDay
+        - company
+        - content
+    ErrorResponse:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+          description: 错误发生的时间戳
+        status:
+          type: integer
+          description: HTTP 状态码
+        error:
+          type: string
+          description: 错误类型
+        message:
+          type: string
+          description: 错误信息
+        path:
+          type: string
+          description: 请求路径
+      example:
+        timestamp: "2025-11-06T10:00:00.000+00:00"
+        status: 400
+        error: "Bad Request"
+        message: "Invalid input data"
+        path: "/api/daily-records"
