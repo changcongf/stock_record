@@ -58,6 +58,7 @@ CREATE TABLE `t_daily_comment`
     `content`         text COLLATE utf8mb4_unicode_ci NOT NULL,
     `create_time`     datetime                        NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time`     datetime                        NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY               `idx_daily_record_id` (`daily_record_id`),
     UNIQUE KEY `uk_current_day` (`current_day`)
@@ -72,6 +73,7 @@ CREATE TABLE `t_company_comment`
     `content`           text COLLATE utf8mb4_unicode_ci         NOT NULL,
     `create_time`       datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time`       datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                 `idx_company_record_id` (`company_record_id`),
     UNIQUE KEY `uk_company_day` (`company`, `current_day`)
@@ -86,6 +88,7 @@ CREATE TABLE `t_industry_comment`
     `content`            text COLLATE utf8mb4_unicode_ci         NOT NULL,
     `create_time`        datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time`        datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                  `idx_industry_record_id` (`industry_record_id`),
     UNIQUE KEY `uk_industry_day` (`industry`, `current_day`)
@@ -101,6 +104,7 @@ CREATE TABLE `t_product_comment`
     `content`           text COLLATE utf8mb4_unicode_ci         NOT NULL,
     `create_time`       datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time`       datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                 `idx_product_record_id` (`product_record_id`),
     UNIQUE KEY `uk_product_day` (`product`, `current_day`)

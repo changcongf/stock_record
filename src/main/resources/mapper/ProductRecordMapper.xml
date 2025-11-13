@@ -3,16 +3,18 @@
         PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
-<mapper namespace="xyz.fcc.stock.record.mapper.DailyRecordMapper">
-    <insert id="insertDailyRecord" parameterType="xyz.fcc.stock.record.entity.DailyRecord">
-        INSERT INTO t_daily_record
+<mapper namespace="xyz.fcc.stock.record.mapper.ProductRecordMapper">
+    <insert id="insertProductRecord" parameterType="xyz.fcc.stock.record.entity.ProductRecord">
+        INSERT INTO t_product_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="currentDay != null">current_day,</if>
+            <if test="product != null and product != ''">product,</if>
             <if test="content != null">content,</if>
             <if test="info != null">info,</if>
         </trim>
         <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
             <if test="currentDay != null">#{currentDay},</if>
+            <if test="product != null and product != ''">#{product},</if>
             <if test="content != null">#{content},</if>
             <if test="info != null">#{info},</if>
         </trim>
@@ -22,11 +24,14 @@
         update_time = CURRENT_TIMESTAMP
     </insert>
 
-    <select id="countDailyRecordsByCondition" resultType="java.lang.Long">
+    <select id="countProductRecordsByCondition" resultType="java.lang.Long">
         SELECT COUNT(*)
-        FROM t_daily_record
+        FROM t_product_record
         <where>
             1=1
+            <if test="product != null and product != ''">
+                AND product = #{product}
+            </if>
             <if test="startDate != null and endDate != null">
                 AND current_day BETWEEN #{startDate} AND #{endDate}
             </if>
@@ -42,17 +47,21 @@
         </where>
     </select>
 
-    <select id="selectDailyRecordByConditionWithPaging" resultType="xyz.fcc.stock.record.entity.DailyRecord">
+    <select id="selectProductRecordByConditionWithPaging" resultType="xyz.fcc.stock.record.entity.ProductRecord">
         SELECT
         id,
         current_day AS currentDay,
+        product,
         content,
         create_time AS createTime,
         update_time AS updateTime,
         info
-        FROM t_daily_record
+        FROM t_product_record
         <where>
             1=1
+            <if test="product != null and product != ''">
+                AND product = #{product}
+            </if>
             <if test="startDate != null and endDate != null">
                 AND current_day BETWEEN #{startDate} AND #{endDate}
             </if>

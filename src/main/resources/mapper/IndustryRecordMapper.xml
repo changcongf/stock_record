@@ -1,32 +1,38 @@
-<?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-
-<mapper namespace="xyz.fcc.stock.record.mapper.DailyRecordMapper">
-    <insert id="insertDailyRecord" parameterType="xyz.fcc.stock.record.entity.DailyRecord">
-        INSERT INTO t_daily_record
+<mapper namespace="xyz.fcc.stock.record.mapper.IndustryRecordMapper">
+    <insert id="insertIndustryRecord" parameterType="xyz.fcc.stock.record.entity.IndustryRecord">
+        INSERT INTO t_industry_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
             <if test="currentDay != null">current_day,</if>
+            <if test="industry != null and industry != ''">industry,</if>
             <if test="content != null">content,</if>
+            <if test="type != null">type,</if>
             <if test="info != null">info,</if>
         </trim>
         <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
             <if test="currentDay != null">#{currentDay},</if>
+            <if test="industry != null and industry != ''">#{industry},</if>
             <if test="content != null">#{content},</if>
+            <if test="type != null">#{type},</if>
             <if test="info != null">#{info},</if>
         </trim>
         ON DUPLICATE KEY UPDATE
         content = VALUES(content),
+        type = VALUES(type),
         info = VALUES(info),
         update_time = CURRENT_TIMESTAMP
     </insert>
 
-    <select id="countDailyRecordsByCondition" resultType="java.lang.Long">
+    <select id="countIndustryRecordsByCondition" resultType="java.lang.Long">
         SELECT COUNT(*)
-        FROM t_daily_record
+        FROM t_industry_record
         <where>
             1=1
+            <if test="industry != null and industry != ''">
+                AND industry = #{industry}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
             <if test="startDate != null and endDate != null">
                 AND current_day BETWEEN #{startDate} AND #{endDate}
             </if>
@@ -42,17 +48,25 @@
         </where>
     </select>
 
-    <select id="selectDailyRecordByConditionWithPaging" resultType="xyz.fcc.stock.record.entity.DailyRecord">
+    <select id="selectIndustryRecordByConditionWithPaging" resultType="xyz.fcc.stock.record.entity.IndustryRecord">
         SELECT
         id,
         current_day AS currentDay,
+        industry,
         content,
+        type,
         create_time AS createTime,
         update_time AS updateTime,
         info
-        FROM t_daily_record
+        FROM t_industry_record
         <where>
             1=1
+            <if test="industry != null and industry != ''">
+                AND industry = #{industry}
+            </if>
+            <if test="type != null and type != ''">
+                AND type = #{type}
+            </if>
             <if test="startDate != null and endDate != null">
                 AND current_day BETWEEN #{startDate} AND #{endDate}
             </if>

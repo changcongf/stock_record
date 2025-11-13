@@ -3,8 +3,9 @@ package xyz.fcc.stock.record.controller;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import xyz.fcc.stock.record.dto.DailyRecordDTO;
+import xyz.fcc.stock.record.dto.*;
 import xyz.fcc.stock.record.service.DailyRecordService;
+import xyz.fcc.stock.record.service.CommentService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -15,22 +16,32 @@ import java.util.List;
 public class DailyRecordController {
 
     private final DailyRecordService dailyRecordService;
+    private final CommentService commentService;
 
-    @PostMapping // 用于创建新记录
+    @PostMapping
     public ResponseEntity<Integer> createDailyRecord(@RequestBody DailyRecordDTO dailyRecordDTO) {
-        int result = dailyRecordService.saveDailyRecord(dailyRecordDTO);
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(dailyRecordService.saveDailyRecord(dailyRecordDTO));
     }
 
     @GetMapping
-    public ResponseEntity<List<DailyRecordDTO>> getDailyRecords(
+    public ResponseEntity<PageResult<DailyRecordWithCommentsDTO>> getDailyRecords(
             @RequestParam(required = false) LocalDate startDate,
             @RequestParam(required = false) LocalDate endDate,
             @RequestParam(required = false) String content,
             @RequestParam(defaultValue = "1") int pageNum,
-            @RequestParam(defaultValue = "10") int pageSize) {
+            @RequestParam(defaultValue = "10") int pageSize
+    ) {
+        return ResponseEntity.ok(dailyRecordService.getDailyRecordsByCondition(
+                startDate, endDate, content, pageNum, pageSize
+        ));
+    }
 
-        List<DailyRecordDTO> records = dailyRecordService.getDailyRecordsByCondition(startDate, endDate, content, pageNum, pageSize);
-        return ResponseEntity.ok(records);
+    @PostMapping("/{recordId}/comments")
+    public ResponseEntity<Integer> addComment(
+            @PathVariable Long recordId,
+            @RequestBody DailyCommentDTO commentDTO
+    ) {
+        commentDTO.setDailyRecordId(recordId);
+        return ResponseEntity.ok(commentService.saveDailyComment(commentDTO));
     }
 }

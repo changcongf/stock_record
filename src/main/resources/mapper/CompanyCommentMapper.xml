@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xyz.fcc.stock.record.mapper.CompanyCommentMapper">
+    <insert id="insertCompanyComment" parameterType="xyz.fcc.stock.record.entity.CompanyComment">
+        INSERT INTO t_company_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="companyRecordId != null">company_record_id,</if>
+            <if test="company != null and company != ''">company,</if>
+            <if test="currentDay != null">current_day,</if>
+            <if test="content != null">content,</if>
+            <if test="info != null">info,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="companyRecordId != null">#{companyRecordId},</if>
+            <if test="company != null and company != ''">#{company},</if>
+            <if test="currentDay != null">#{currentDay},</if>
+            <if test="content != null">#{content},</if>
+            <if test="info != null">#{info},</if>
+        </trim>
+    </insert>
+
+    <select id="selectCompanyCommentsByRecordId" resultType="xyz.fcc.stock.record.entity.CompanyComment">
+        SELECT
+            id,
+            company_record_id AS companyRecordId,
+            company,
+            current_day AS currentDay,
+            content,
+            create_time AS createTime,
+            update_time AS updateTime,
+            info
+        FROM t_company_comment
+        WHERE company_record_id = #{recordId}
+        ORDER BY create_time DESC
+    </select>
+</mapper>

@@ -1,0 +1,34 @@
+<mapper namespace="xyz.fcc.stock.record.mapper.ProductCommentMapper">
+    <insert id="insertProductComment" parameterType="xyz.fcc.stock.record.entity.ProductComment">
+        INSERT INTO t_product_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="productRecordId != null">product_record_id,</if>
+            <if test="product != null and product != ''">product,</if>
+            <if test="currentDay != null">current_day,</if>
+            <if test="content != null">content,</if>
+            <if test="info != null">info,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="productRecordId != null">#{productRecordId},</if>
+            <if test="product != null and product != ''">#{product},</if>
+            <if test="currentDay != null">#{currentDay},</if>
+            <if test="content != null">#{content},</if>
+            <if test="info != null">#{info},</if>
+        </trim>
+    </insert>
+
+    <select id="selectProductCommentsByRecordId" resultType="xyz.fcc.stock.record.entity.ProductComment">
+        SELECT
+        id,
+        product_record_id AS productRecordId,
+        product,
+        current_day AS currentDay,
+        content,
+        create_time AS createTime,
+        update_time AS updateTime,
+        info
+        FROM t_product_comment
+        WHERE product_record_id = #{recordId}
+        ORDER BY create_time DESC
+    </select>
+</mapper>

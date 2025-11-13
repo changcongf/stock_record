@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xyz.fcc.stock.record.mapper.IndustryCommentMapper">
+    <insert id="insertIndustryComment" parameterType="xyz.fcc.stock.record.entity.IndustryComment">
+        INSERT INTO t_industry_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="industryRecordId != null">industry_record_id,</if>
+            <if test="industry != null and industry != ''">industry,</if>
+            <if test="currentDay != null">current_day,</if>
+            <if test="content != null">content,</if>
+            <if test="info != null">info,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="industryRecordId != null">#{industryRecordId},</if>
+            <if test="industry != null and industry != ''">#{industry},</if>
+            <if test="currentDay != null">#{currentDay},</if>
+            <if test="content != null">#{content},</if>
+            <if test="info != null">#{info},</if>
+        </trim>
+    </insert>
+
+    <select id="selectIndustryCommentsByRecordId" resultType="xyz.fcc.stock.record.entity.IndustryComment">
+        SELECT
+            id,
+            industry_record_id AS industryRecordId,
+            industry,
+            current_day AS currentDay,
+            content,
+            create_time AS createTime,
+            update_time AS updateTime,
+            info
+        FROM t_industry_comment
+        WHERE industry_record_id = #{recordId}
+        ORDER BY create_time DESC
+    </select>
+</mapper>

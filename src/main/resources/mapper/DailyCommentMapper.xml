@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="xyz.fcc.stock.record.mapper.DailyCommentMapper">
+    <insert id="insertDailyComment" parameterType="xyz.fcc.stock.record.entity.DailyComment">
+        INSERT INTO t_daily_comment
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dailyRecordId != null">daily_record_id,</if>
+            <if test="currentDay != null">current_day,</if>
+            <if test="content != null">content,</if>
+            <if test="info != null">info,</if>
+        </trim>
+        <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
+            <if test="dailyRecordId != null">#{dailyRecordId},</if>
+            <if test="currentDay != null">#{currentDay},</if>
+            <if test="content != null">#{content},</if>
+            <if test="info != null">#{info},</if>
+        </trim>
+    </insert>
+
+    <select id="selectDailyCommentsByRecordId" resultType="xyz.fcc.stock.record.entity.DailyComment">
+        SELECT
+            id,
+            daily_record_id AS dailyRecordId,
+            current_day AS currentDay,
+            content,
+            create_time AS createTime,
+            update_time AS updateTime,
+            info
+        FROM t_daily_comment
+        WHERE daily_record_id = #{recordId}
+        ORDER BY create_time DESC
+    </select>
+</mapper>

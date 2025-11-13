@@ -2,15 +2,14 @@ package xyz.fcc.stock.record.service.impl;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import xyz.fcc.stock.record.dto.CompanyRecordDTO;
+import xyz.fcc.stock.record.dto.*;
 import xyz.fcc.stock.record.entity.CompanyRecord;
 import xyz.fcc.stock.record.mapper.CompanyRecordMapper;
+import xyz.fcc.stock.record.mapper.CompanyCommentMapper;
 import xyz.fcc.stock.record.service.CompanyRecordService;
 
 import java.time.LocalDate;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +17,7 @@ import java.util.stream.Collectors;
 public class CompanyRecordServiceImpl implements CompanyRecordService {
 
     private final CompanyRecordMapper companyRecordMapper;
+    private final CompanyCommentMapper companyCommentMapper;
 
     @Override
     public int saveCompanyRecord(CompanyRecordDTO companyRecordDTO) {
@@ -26,30 +26,68 @@ public class CompanyRecordServiceImpl implements CompanyRecordService {
         entity.setCurrentDay(companyRecordDTO.getCurrentDay());
         entity.setCompany(companyRecordDTO.getCompany());
         entity.setContent(companyRecordDTO.getContent());
-        entity.setInfo(companyRecordDTO.getInfo());
-        // create_time 和 update_time 由数据库自动生成
+        entity.setInfo("兼容处理"); // info字段兼容处理
         return companyRecordMapper.insertCompanyRecord(entity);
     }
 
     @Override
-    public List<CompanyRecordDTO> getCompanyRecordsByCondition(String company, LocalDate startDate, LocalDate endDate, String content, int pageNum, int pageSize) {
+    public PageResult<CompanyRecordWithCommentsDTO> getCompanyRecordsByCondition(
+            String company,
+            LocalDate startDate,
+            LocalDate endDate,
+            String content,
+            int pageNum,
+            int pageSize
+    ) {
         int offset = (pageNum - 1) * pageSize;
         int limit = pageSize;
 
+        List<CompanyRecord> entities = companyRecordMapper.selectCompanyRecordByConditionWithPaging(
+                company, startDate, endDate, content, offset, limit
+        );
 
-        List<CompanyRecord> entities = companyRecordMapper.selectCompanyRecordByConditionWithPaging(company, startDate, endDate, content, offset, limit);
-        return entities.stream()
-                .map(this::convertToDTO) // 将 Entity 转换为 DTO
+        long total = companyRecordMapper.countCompanyRecordsByCondition(company, startDate, endDate, content);
+
+        List<CompanyRecordWithCommentsDTO> dtos = entities.stream()
+                .map(this::convertToDTOWithComments)
+                .collect(Collectors.toList());
+
+        return new PageResult<>(
+                dtos,
+                total,
+                pageNum,
+                pageSize,
+                (total + pageSize - 1) / pageSize
+        );
+    }
+
+    @Override
+    public List<CompanyCommentDTO> getCommentsByRecordId(Long recordId) {
+        return companyCommentMapper.selectCompanyCommentsByRecordId(recordId).stream()
+                .map(this::convertCommentToDTO)
                 .collect(Collectors.toList());
     }
 
-    // 辅助方法：将 Entity 转换为 DTO
-    private CompanyRecordDTO convertToDTO(CompanyRecord entity) {
-        CompanyRecordDTO dto = new CompanyRecordDTO();
+    private CompanyRecordWithCommentsDTO convertToDTOWithComments(CompanyRecord entity) {
+        CompanyRecordWithCommentsDTO dto = new CompanyRecordWithCommentsDTO();
         dto.setId(entity.getId());
         dto.setCurrentDay(entity.getCurrentDay());
         dto.setCompany(entity.getCompany());
         dto.setContent(entity.getContent());
+        dto.setInfo(entity.getInfo());
+        dto.setComments(getCommentsByRecordId(entity.getId()));
+        return dto;
+    }
+
+    private CompanyCommentDTO convertCommentToDTO(xyz.fcc.stock.record.entity.CompanyComment entity) {
+        CompanyCommentDTO dto = new CompanyCommentDTO();
+        dto.setId(entity.getId());
+        dto.setCompanyRecordId(entity.getCompanyRecordId());
+        dto.setCompany(entity.getCompany());
+        dto.setCurrentDay(entity.getCurrentDay());
+        dto.setContent(entity.getContent());
+        dto.setCreateTime(entity.getCreateTime());
+        dto.setUpdateTime(entity.getUpdateTime());
         dto.setInfo(entity.getInfo());
         return dto;
     }

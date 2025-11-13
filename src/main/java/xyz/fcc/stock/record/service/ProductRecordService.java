@@ -4,10 +4,11 @@ import xyz.fcc.stock.record.dto.*;
 import java.time.LocalDate;
 import java.util.List;
 
-public interface DailyRecordService {
-    int saveDailyRecord(DailyRecordDTO dailyRecordDTO);
+public interface ProductRecordService {
+    int saveProductRecord(ProductRecordDTO productRecordDTO);
 
-    PageResult<DailyRecordWithCommentsDTO> getDailyRecordsByCondition(
+    PageResult<ProductRecordDTO> getProductRecordsByCondition(
+            String product,
             LocalDate startDate,
             LocalDate endDate,
             String content,
@@ -15,5 +16,5 @@ public interface DailyRecordService {
             int pageSize
     );
 
-    List<DailyCommentDTO> getCommentsByRecordId(Long recordId);
+    List<ProductCommentDTO> getCommentsByRecordId(Long recordId);
 }
