@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>复盘系统</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
     <style>
         body {
             padding: 20px;
@@ -13,9 +14,25 @@
         .card {
             margin-bottom: 20px;
             box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            border-radius: 0.5rem;
+            transition: transform 0.3s ease;
+        }
+        .card:hover {
+            transform: translateY(-2px);
         }
         .nav-tabs {
             margin-bottom: 20px;
+            border-bottom: 2px solid #0d6efd;
+        }
+        .nav-link {
+            font-weight: 500;
+            padding: 10px 20px;
+            border-radius: 0.375rem 0.375rem 0 0 !important;
+        }
+        .nav-link.active {
+            background-color: #0d6efd;
+            color: white !important;
+            border-color: #0d6efd #0d6efd #fff !important;
         }
         .search-card {
             margin-top: 20px;
@@ -26,193 +43,926 @@
             padding: 15px;
             margin-bottom: 10px;
             background-color: white;
+            transition: all 0.3s ease;
+        }
+        .record-item:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
         .record-date {
             font-weight: bold;
             color: #0d6efd;
+            font-size: 1.1em;
+        }
+        .record-company {
+            color: #198754;
+            font-weight: 500;
         }
         .record-content {
             margin-top: 5px;
             white-space: pre-wrap;
+            line-height: 1.5;
+        }
+        .record-comments {
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px dashed #e9ecef;
+        }
+        .comment-item {
+            background-color: #f8f9fa;
+            padding: 8px 12px;
+            border-radius: 0.25rem;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+        }
+        .comment-date {
+            font-size: 0.8em;
+            color: #6c757d;
         }
         .pagination {
             justify-content: center;
+            margin-top: 15px;
         }
         .advanced-search {
             border-top: 1px solid #dee2e6;
             padding-top: 15px;
             margin-top: 15px;
         }
+        .attention-card {
+            background-color: #e3f2fd;
+            border-left: 4px solid #0d6efd;
+            margin-bottom: 15px;
+        }
+        .attention-item {
+            cursor: pointer;
+            padding: 8px 12px;
+            border-radius: 0.25rem;
+            transition: all 0.2s ease;
+        }
+        .attention-item:hover {
+            background-color: #bbdefb;
+        }
+        .attention-count {
+            background-color: #0d6efd;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        .input-group-text {
+            background-color: #f1f3f5;
+            border-right: 0;
+        }
+        .btn-quick-search {
+            padding: 2px 8px;
+            font-size: 0.8em;
+            margin-left: 5px;
+        }
+        .comment-input-area {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e9ecef;
+        }
+        .toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+        .record-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .quick-select-container {
+            margin-bottom: 15px;
+        }
+        .quick-select-badge {
+            background-color: #e9ecef;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .quick-select-badge:hover {
+            background-color: #dee2e6;
+        }
+        .tab-pane {
+            padding: 15px 0;
+        }
+        .input-field {
+            margin-bottom: 15px;
+        }
+        .form-label {
+            font-weight: 500;
+            color: #495057;
+        }
+        .record-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+        .btn-sm {
+            padding: 4px 8px;
+            font-size: 0.85em;
+        }
+        .search-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .attention-tabs {
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 15px;
+        }
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(0, 0, 0, 0.1);
+            border-radius: 50%;
+            border-top-color: #0d6efd;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
     </style>
 </head>
 <body>
 <div class="container">
-    <h1 class="text-center mb-4">复盘系统</h1>
+    <h1 class="text-center mb-4">
+        <i class="bi bi-journal-text me-2"></i>复盘系统
+    </h1>
 
     <ul class="nav nav-tabs" id="myTab" role="tablist">
         <li class="nav-item" role="presentation">
-            <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab" aria-controls="daily" aria-selected="true">大盘复盘</button>
+            <button class="nav-link active" id="daily-tab" data-bs-toggle="tab" data-bs-target="#daily" type="button" role="tab" aria-controls="daily" aria-selected="true">
+                <i class="bi bi-graph-up me-1"></i>大盘复盘
+            </button>
         </li>
         <li class="nav-item" role="presentation">
-            <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab" aria-controls="company" aria-selected="false">个股复盘</button>
+            <button class="nav-link" id="company-tab" data-bs-toggle="tab" data-bs-target="#company" type="button" role="tab" aria-controls="company" aria-selected="false">
+                <i class="bi bi-building me-1"></i>个股复盘
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="industry-tab" data-bs-toggle="tab" data-bs-target="#industry" type="button" role="tab" aria-controls="industry" aria-selected="false">
+                <i class="bi bi-diagram-3 me-1"></i>行业复盘
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="product-tab" data-bs-toggle="tab" data-bs-target="#product" type="button" role="tab" aria-controls="product" aria-selected="false">
+                <i class="bi bi-industry me-1"></i>产业复盘
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="attention-tab" data-bs-toggle="tab" data-bs-target="#attention" type="button" role="tab" aria-controls="attention" aria-selected="false">
+                <i class="bi bi-star me-1"></i>我的关注
+            </button>
         </li>
     </ul>
 
     <div class="tab-content" id="myTabContent">
         <!-- 大盘复盘标签页 -->
         <div class="tab-pane fade show active" id="daily" role="tabpanel" aria-labelledby="daily-tab">
-            <div class="card">
-                <div class="card-header bg-primary text-white">
-                    <h5 class="mb-0">大盘复盘记录</h5>
-                </div>
-                <div class="card-body">
-                    <div class="mb-3">
-                        <label for="dailyDate" class="form-label">选择日期</label>
-                        <input type="date" class="form-control" id="dailyDate">
-                    </div>
-                    <div class="mb-3">
-                        <label for="dailyContent" class="form-label">复盘内容</label>
-                        <textarea class="form-control" id="dailyContent" rows="10" placeholder="请输入大盘复盘内容..."></textarea>
-                    </div>
-                    <button id="saveDailyBtn" class="btn btn-primary">保存复盘</button>
-                </div>
-            </div>
-
-            <!-- 查询区域 -->
-            <div class="card search-card">
-                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">查询历史记录</h5>
-                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#dailyAdvancedSearch" aria-expanded="false" aria-controls="dailyAdvancedSearch">
-                        高级搜索
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="dailySearchKeyword" class="form-label">内容关键字</label>
-                            <input type="text" class="form-control" id="dailySearchKeyword" placeholder="例如：市场、波动">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-pencil-square me-2"></i>大盘复盘记录
+                            </h5>
                         </div>
-                        <div class="col-md-4">
-                            <button id="searchDailyBtn" class="btn btn-info w-100">搜索</button>
-                        </div>
-                        <div class="col-md-4">
-                            <button id="resetDailyBtn" class="btn btn-outline-secondary w-100">重置</button>
-                        </div>
-                    </div>
-
-                    <div class="collapse advanced-search" id="dailyAdvancedSearch">
-                        <div class="row g-3 mt-2">
-                            <div class="col-md-6">
-                                <label for="dailyStartDate" class="form-label">开始日期</label>
-                                <input type="date" class="form-control" id="dailyStartDate">
+                        <div class="card-body">
+                            <div class="input-field">
+                                <label for="dailyDate" class="form-label">复盘日期</label>
+                                <input type="date" class="form-control" id="dailyDate">
                             </div>
-                            <div class="col-md-6">
-                                <label for="dailyEndDate" class="form-label">结束日期</label>
-                                <input type="date" class="form-control" id="dailyEndDate">
+                            <div class="input-field">
+                                <label for="dailyContent" class="form-label">复盘内容</label>
+                                <textarea class="form-control" id="dailyContent" rows="8" placeholder="请输入大盘复盘内容..."></textarea>
+                            </div>
+                            <button id="saveDailyBtn" class="btn btn-primary">
+                                <i class="bi bi-save me-1"></i>保存复盘
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 查询区域 -->
+                    <div class="card search-card">
+                        <div class="card-header bg-info text-white">
+                            <div class="search-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-search me-2"></i>查询历史记录
+                                </h5>
+                                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#dailyAdvancedSearch" aria-expanded="false" aria-controls="dailyAdvancedSearch">
+                                    <i class="bi bi-sliders me-1"></i>高级搜索
+                                </button>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+                        <div class="card-body">
+                            <div class="quick-select-container">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label class="form-label mb-0 me-2">快捷选择:</label>
+                                    <div class="dropdown">
+                                        <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button" id="dailyQuickSelectBtn" data-bs-toggle="dropdown" aria-expanded="false">
+                                            <i class="bi bi-clock-history me-1"></i>最近查询
+                                        </button>
+                                        <ul class="dropdown-menu" aria-labelledby="dailyQuickSelectBtn">
+                                            <li><a class="dropdown-item" href="#" data-date="today">今天</a></li>
+                                            <li><a class="dropdown-item" href="#" data-date="yesterday">昨天</a></li>
+                                            <li><a class="dropdown-item" href="#" data-date="last7">最近7天</a></li>
+                                            <li><a class="dropdown-item" href="#" data-date="last30">最近30天</a></li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
 
-            <!-- 查询结果展示区 -->
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">查询结果</h5>
-                </div>
-                <div class="card-body">
-                    <div id="dailyResults" class="results-container">
-                        <p class="text-muted">正在加载...</p>
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="dailySearchKeyword" class="form-label">内容关键字</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                        <input type="text" class="form-control" id="dailySearchKeyword" placeholder="例如：市场、波动、政策">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                                    <div class="d-grid gap-2">
+                                        <button id="searchDailyBtn" class="btn btn-info">
+                                            <i class="bi bi-search me-1"></i>搜索
+                                        </button>
+                                        <button id="resetDailyBtn" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i>重置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="collapse advanced-search" id="dailyAdvancedSearch">
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-6">
+                                        <label for="dailyStartDate" class="form-label">开始日期</label>
+                                        <input type="date" class="form-control" id="dailyStartDate">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="dailyEndDate" class="form-label">结束日期</label>
+                                        <input type="date" class="form-control" id="dailyEndDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    <nav aria-label="Daily records pagination">
-                        <ul class="pagination" id="dailyPagination">
-                            <!-- Pagination links will be generated here -->
-                        </ul>
-                    </nav>
+
+                    <!-- 查询结果展示区 -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="bi bi-list-ul me-2"></i>查询结果
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="dailyResults" class="results-container">
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner"></div>
+                                    <p class="mt-2 text-muted">正在加载...</p>
+                                </div>
+                            </div>
+                            <nav aria-label="Daily records pagination">
+                                <ul class="pagination justify-content-center" id="dailyPagination">
+                                    <!-- Pagination links will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="sticky-top" style="top: 20px;">
+                        <div class="card attention-card">
+                            <div class="card-header bg-primary text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-star me-2"></i>我的关注
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="dailyAttentionSearch" placeholder="搜索关注...">
+                                        <button class="btn btn-outline-secondary" type="button" id="dailyAttentionSearchBtn">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="dailyAttentionList" class="attention-list">
+                                    <p class="text-muted text-center">加载关注列表...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
         <!-- 个股复盘标签页 -->
         <div class="tab-pane fade" id="company" role="tabpanel" aria-labelledby="company-tab">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-pencil-square me-2"></i>个股复盘记录
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-field">
+                                <label for="companyDate" class="form-label">复盘日期</label>
+                                <input type="date" class="form-control" id="companyDate">
+                            </div>
+                            <div class="input-field">
+                                <label for="companyName" class="form-label">股票代码/名称</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="companyName" placeholder="例如：AAPL 或 苹果公司">
+                                    <button class="btn btn-outline-secondary" type="button" id="loadCompanyBtn">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-field">
+                                <label for="companyContent" class="form-label">复盘内容</label>
+                                <textarea class="form-control" id="companyContent" rows="8" placeholder="请输入个股复盘内容..."></textarea>
+                            </div>
+                            <button id="saveCompanyBtn" class="btn btn-success">
+                                <i class="bi bi-save me-1"></i>保存复盘
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 查询区域 -->
+                    <div class="card search-card">
+                        <div class="card-header bg-info text-white">
+                            <div class="search-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-search me-2"></i>查询历史记录
+                                </h5>
+                                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#companyAdvancedSearch" aria-expanded="false" aria-controls="companyAdvancedSearch">
+                                    <i class="bi bi-sliders me-1"></i>高级搜索
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-select-container">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label class="form-label mb-0 me-2">快捷选择:</label>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="company" data-value="AAPL">AAPL</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="company" data-value="GOOGL">GOOGL</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="company" data-value="TSLA">TSLA</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="company" data-value="META">META</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="companyNameSearch" class="form-label">公司名称</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-building"></i></span>
+                                        <input type="text" class="form-control" id="companyNameSearch" placeholder="例如：AAPL、腾讯、阿里">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                                    <div class="d-grid gap-2">
+                                        <button id="searchCompanyBtn" class="btn btn-info">
+                                            <i class="bi bi-search me-1"></i>搜索
+                                        </button>
+                                        <button id="resetCompanyBtn" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i>重置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="collapse advanced-search" id="companyAdvancedSearch">
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-4">
+                                        <label for="companySearchKeyword" class="form-label">内容关键字</label>
+                                        <input type="text" class="form-control" id="companySearchKeyword" placeholder="例如：股价、上涨、业绩">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="companyStartDate" class="form-label">开始日期</label>
+                                        <input type="date" class="form-control" id="companyStartDate">
+                                    </div>
+                                    <div class="col-md-4">
+                                        <label for="companyEndDate" class="form-label">结束日期</label>
+                                        <input type="date" class="form-control" id="companyEndDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 查询结果展示区 -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="bi bi-list-ul me-2"></i>查询结果
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="companyResults" class="results-container">
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner"></div>
+                                    <p class="mt-2 text-muted">请输入公司名称并点击"搜索"按钮。</p>
+                                </div>
+                            </div>
+                            <nav aria-label="Company records pagination">
+                                <ul class="pagination justify-content-center" id="companyPagination">
+                                    <!-- Pagination links will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="sticky-top" style="top: 20px;">
+                        <div class="card attention-card">
+                            <div class="card-header bg-success text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-star me-2"></i>我的关注
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="companyAttentionSearch" placeholder="搜索关注...">
+                                        <button class="btn btn-outline-secondary" type="button" id="companyAttentionSearchBtn">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="companyAttentionList" class="attention-list">
+                                    <p class="text-muted text-center">加载关注列表...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 行业复盘标签页 -->
+        <div class="tab-pane fade" id="industry" role="tabpanel" aria-labelledby="industry-tab">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-warning text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-pencil-square me-2"></i>行业复盘记录
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-field">
+                                <label for="industryDate" class="form-label">复盘日期</label>
+                                <input type="date" class="form-control" id="industryDate">
+                            </div>
+                            <div class="input-field">
+                                <label for="industryName" class="form-label">行业名称</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="industryName" placeholder="例如：科技、金融、医疗">
+                                    <button class="btn btn-outline-secondary" type="button" id="loadIndustryBtn">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-field">
+                                <label for="industryType" class="form-label">行业类型</label>
+                                <input type="text" class="form-control" id="industryType" placeholder="例如：半导体、银行、生物科技">
+                            </div>
+                            <div class="input-field">
+                                <label for="industryContent" class="form-label">复盘内容</label>
+                                <textarea class="form-control" id="industryContent" rows="8" placeholder="请输入行业复盘内容..."></textarea>
+                            </div>
+                            <button id="saveIndustryBtn" class="btn btn-warning">
+                                <i class="bi bi-save me-1"></i>保存复盘
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 查询区域 -->
+                    <div class="card search-card">
+                        <div class="card-header bg-info text-white">
+                            <div class="search-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-search me-2"></i>查询历史记录
+                                </h5>
+                                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#industryAdvancedSearch" aria-expanded="false" aria-controls="industryAdvancedSearch">
+                                    <i class="bi bi-sliders me-1"></i>高级搜索
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-select-container">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label class="form-label mb-0 me-2">快捷选择:</label>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="industry" data-value="科技">科技</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="industry" data-value="金融">金融</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="industry" data-value="医疗">医疗</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="industry" data-value="消费">消费</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label for="industryNameSearch" class="form-label">行业名称</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-diagram-3"></i></span>
+                                        <input type="text" class="form-control" id="industryNameSearch" placeholder="例如：科技、金融">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="industryTypeSearch" class="form-label">行业类型</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-list"></i></span>
+                                        <input type="text" class="form-control" id="industryTypeSearch" placeholder="例如：半导体、银行">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="industrySearchKeyword" class="form-label">内容关键字</label>
+                                    <input type="text" class="form-control" id="industrySearchKeyword" placeholder="例如：增长、政策、趋势">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                                    <div class="d-grid gap-2">
+                                        <button id="searchIndustryBtn" class="btn btn-info">
+                                            <i class="bi bi-search me-1"></i>搜索
+                                        </button>
+                                        <button id="resetIndustryBtn" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i>重置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="collapse advanced-search" id="industryAdvancedSearch">
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-6">
+                                        <label for="industryStartDate" class="form-label">开始日期</label>
+                                        <input type="date" class="form-control" id="industryStartDate">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="industryEndDate" class="form-label">结束日期</label>
+                                        <input type="date" class="form-control" id="industryEndDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 查询结果展示区 -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="bi bi-list-ul me-2"></i>查询结果
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="industryResults" class="results-container">
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner"></div>
+                                    <p class="mt-2 text-muted">请输入行业名称并点击"搜索"按钮。</p>
+                                </div>
+                            </div>
+                            <nav aria-label="Industry records pagination">
+                                <ul class="pagination justify-content-center" id="industryPagination">
+                                    <!-- Pagination links will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="sticky-top" style="top: 20px;">
+                        <div class="card attention-card">
+                            <div class="card-header bg-warning text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-star me-2"></i>我的关注
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="industryAttentionSearch" placeholder="搜索关注...">
+                                        <button class="btn btn-outline-secondary" type="button" id="industryAttentionSearchBtn">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="industryAttentionList" class="attention-list">
+                                    <p class="text-muted text-center">加载关注列表...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 产业复盘标签页 -->
+        <div class="tab-pane fade" id="product" role="tabpanel" aria-labelledby="product-tab">
+            <div class="row">
+                <div class="col-lg-8">
+                    <div class="card">
+                        <div class="card-header bg-danger text-white">
+                            <h5 class="mb-0">
+                                <i class="bi bi-pencil-square me-2"></i>产业复盘记录
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-field">
+                                <label for="productDate" class="form-label">复盘日期</label>
+                                <input type="date" class="form-control" id="productDate">
+                            </div>
+                            <div class="input-field">
+                                <label for="productName" class="form-label">产业名称</label>
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="productName" placeholder="例如：新能源、人工智能、半导体">
+                                    <button class="btn btn-outline-secondary" type="button" id="loadProductBtn">
+                                        <i class="bi bi-arrow-repeat"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="input-field">
+                                <label for="productContent" class="form-label">复盘内容</label>
+                                <textarea class="form-control" id="productContent" rows="8" placeholder="请输入产业复盘内容..."></textarea>
+                            </div>
+                            <button id="saveProductBtn" class="btn btn-danger">
+                                <i class="bi bi-save me-1"></i>保存复盘
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 查询区域 -->
+                    <div class="card search-card">
+                        <div class="card-header bg-info text-white">
+                            <div class="search-header">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-search me-2"></i>查询历史记录
+                                </h5>
+                                <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#productAdvancedSearch" aria-expanded="false" aria-controls="productAdvancedSearch">
+                                    <i class="bi bi-sliders me-1"></i>高级搜索
+                                </button>
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <div class="quick-select-container">
+                                <div class="d-flex align-items-center mb-2">
+                                    <label class="form-label mb-0 me-2">快捷选择:</label>
+                                    <div class="d-flex flex-wrap gap-1">
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="product" data-value="新能源">新能源</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="product" data-value="人工智能">人工智能</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="product" data-value="半导体">半导体</span>
+                                        <span class="badge bg-light text-dark quick-select-badge" data-type="product" data-value="生物医药">生物医药</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3">
+                                <div class="col-md-8">
+                                    <label for="productNameSearch" class="form-label">产业名称</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="bi bi-industry"></i></span>
+                                        <input type="text" class="form-control" id="productNameSearch" placeholder="例如：新能源、人工智能">
+                                    </div>
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label d-none d-md-block">&nbsp;</label>
+                                    <div class="d-grid gap-2">
+                                        <button id="searchProductBtn" class="btn btn-info">
+                                            <i class="bi bi-search me-1"></i>搜索
+                                        </button>
+                                        <button id="resetProductBtn" class="btn btn-outline-secondary">
+                                            <i class="bi bi-arrow-counterclockwise me-1"></i>重置
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row g-3 mt-2">
+                                <div class="col-md-8">
+                                    <label for="productSearchKeyword" class="form-label">内容关键字</label>
+                                    <input type="text" class="form-control" id="productSearchKeyword" placeholder="例如：发展、技术、投资">
+                                </div>
+                            </div>
+
+                            <div class="collapse advanced-search" id="productAdvancedSearch">
+                                <div class="row g-3 mt-2">
+                                    <div class="col-md-6">
+                                        <label for="productStartDate" class="form-label">开始日期</label>
+                                        <input type="date" class="form-control" id="productStartDate">
+                                    </div>
+                                    <div class="col-md-6">
+                                        <label for="productEndDate" class="form-label">结束日期</label>
+                                        <input type="date" class="form-control" id="productEndDate">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 查询结果展示区 -->
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h5 class="mb-0">
+                                <i class="bi bi-list-ul me-2"></i>查询结果
+                            </h5>
+                        </div>
+                        <div class="card-body">
+                            <div id="productResults" class="results-container">
+                                <div class="text-center py-4">
+                                    <div class="loading-spinner"></div>
+                                    <p class="mt-2 text-muted">请输入产业名称并点击"搜索"按钮。</p>
+                                </div>
+                            </div>
+                            <nav aria-label="Product records pagination">
+                                <ul class="pagination justify-content-center" id="productPagination">
+                                    <!-- Pagination links will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="sticky-top" style="top: 20px;">
+                        <div class="card attention-card">
+                            <div class="card-header bg-danger text-white">
+                                <h5 class="mb-0">
+                                    <i class="bi bi-star me-2"></i>我的关注
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control" id="productAttentionSearch" placeholder="搜索关注...">
+                                        <button class="btn btn-outline-secondary" type="button" id="productAttentionSearchBtn">
+                                            <i class="bi bi-search"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div id="productAttentionList" class="attention-list">
+                                    <p class="text-muted text-center">加载关注列表...</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 我的关注标签页 -->
+        <div class="tab-pane fade" id="attention" role="tabpanel" aria-labelledby="attention-tab">
             <div class="card">
-                <div class="card-header bg-success text-white">
-                    <h5 class="mb-0">个股复盘记录</h5>
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">
+                        <i class="bi bi-star me-2"></i>我的关注管理
+                    </h5>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label for="companyDate" class="form-label">选择日期</label>
-                        <input type="date" class="form-control" id="companyDate">
-                    </div>
-                    <div class="mb-3">
-                        <label for="companyName" class="form-label">股票代码/名称</label>
-                        <input type="text" class="form-control" id="companyName" placeholder="例如：AAPL 或 苹果公司">
-                    </div>
-                    <div class="mb-3">
-                        <label for="companyContent" class="form-label">复盘内容</label>
-                        <textarea class="form-control" id="companyContent" rows="10" placeholder="请输入个股复盘内容..."></textarea>
-                    </div>
-                    <button id="saveCompanyBtn" class="btn btn-success">保存复盘</button>
-                </div>
-            </div>
-
-            <!-- 查询区域 -->
-            <div class="card search-card">
-                <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">查询历史记录</h5>
-                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#companyAdvancedSearch" aria-expanded="false" aria-controls="companyAdvancedSearch">
-                        高级搜索
-                    </button>
-                </div>
-                <div class="card-body">
-                    <div class="row g-3">
-                        <div class="col-md-4">
-                            <label for="companyNameSearch" class="form-label">公司名称</label>
-                            <input type="text" class="form-control" id="companyNameSearch" placeholder="例如：AAPL">
-                        </div>
-                        <div class="col-md-4">
-                            <button id="searchCompanyBtn" class="btn btn-info w-100">搜索</button>
-                        </div>
-                        <div class="col-md-4">
-                            <button id="resetCompanyBtn" class="btn btn-outline-secondary w-100">重置</button>
-                        </div>
-                    </div>
-
-                    <div class="collapse advanced-search" id="companyAdvancedSearch">
-                        <div class="row g-3 mt-2">
-                            <div class="col-md-4">
-                                <label for="companySearchKeyword" class="form-label">内容关键字</label>
-                                <input type="text" class="form-control" id="companySearchKeyword" placeholder="例如：股价、上涨">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="companyStartDate" class="form-label">开始日期</label>
-                                <input type="date" class="form-control" id="companyStartDate">
-                            </div>
-                            <div class="col-md-4">
-                                <label for="companyEndDate" class="form-label">结束日期</label>
-                                <input type="date" class="form-control" id="companyEndDate">
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <div class="input-group">
+                                <input type="text" class="form-control" id="newAttentionName" placeholder="输入名称（公司/行业/产业）">
+                                <select class="form-select" id="newAttentionType" style="max-width: 150px;">
+                                    <option value="company">公司</option>
+                                    <option value="industry">行业</option>
+                                    <option value="product">产业</option>
+                                </select>
+                                <button class="btn btn-primary" id="addAttentionBtn">
+                                    <i class="bi bi-plus-circle"></i> 添加
+                                </button>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
 
-            <!-- 查询结果展示区 -->
-            <div class="card">
-                <div class="card-header bg-light">
-                    <h5 class="mb-0">查询结果</h5>
-                </div>
-                <div class="card-body">
-                    <div id="companyResults" class="results-container">
-                        <p class="text-muted">请输入公司名称并点击“搜索”按钮。</p>
+                    <ul class="nav nav-tabs attention-tabs">
+                        <li class="nav-item">
+                            <button class="nav-link active" id="company-attention-tab" data-bs-toggle="tab" data-bs-target="#company-attention" type="button" role="tab">公司关注</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="industry-attention-tab" data-bs-toggle="tab" data-bs-target="#industry-attention" type="button" role="tab">行业关注</button>
+                        </li>
+                        <li class="nav-item">
+                            <button class="nav-link" id="product-attention-tab" data-bs-toggle="tab" data-bs-target="#product-attention" type="button" role="tab">产业关注</button>
+                        </li>
+                    </ul>
+
+                    <div class="tab-content mt-3">
+                        <div class="tab-pane fade show active" id="company-attention" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>公司名称</th>
+                                        <th>关注次数</th>
+                                        <th>最后更新</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="companyAttentionTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <div class="loading-spinner"></div>
+                                            <span class="ms-2">加载中...</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav aria-label="Company attention pagination">
+                                <ul class="pagination justify-content-center" id="companyAttentionPagination">
+                                    <!-- Pagination links will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="tab-pane fade" id="industry-attention" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>行业名称</th>
+                                        <th>关注次数</th>
+                                        <th>最后更新</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="industryAttentionTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <div class="loading-spinner"></div>
+                                            <span class="ms-2">加载中...</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav aria-label="Industry attention pagination">
+                                <ul class="pagination justify-content-center" id="industryAttentionPagination">
+                                    <!-- Pagination links will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
+                        <div class="tab-pane fade" id="product-attention" role="tabpanel">
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead class="table-light">
+                                    <tr>
+                                        <th>产业名称</th>
+                                        <th>关注次数</th>
+                                        <th>最后更新</th>
+                                        <th>操作</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="productAttentionTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center">
+                                            <div class="loading-spinner"></div>
+                                            <span class="ms-2">加载中...</span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <nav aria-label="Product attention pagination">
+                                <ul class="pagination justify-content-center" id="productAttentionPagination">
+                                    <!-- Pagination links will be generated here -->
+                                </ul>
+                            </nav>
+                        </div>
                     </div>
-                    <nav aria-label="Company records pagination">
-                        <ul class="pagination" id="companyPagination">
-                            <!-- Pagination links will be generated here -->
-                        </ul>
-                    </nav>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+
+<!-- Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="liveToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="toast-header">
+            <strong class="me-auto">系统通知</strong>
+            <small>现在</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+        <div class="toast-body">
+            操作成功！
         </div>
     </div>
 </div>
@@ -223,12 +973,126 @@
         const today = new Date().toISOString().split('T')[0];
         document.getElementById('dailyDate').value = today;
         document.getElementById('companyDate').value = today;
+        document.getElementById('industryDate').value = today;
+        document.getElementById('productDate').value = today;
 
-        // 分页状态管理
-        let dailyPage = 1;
-        let companyPage = 1;
-        let currentDailyQuery = null;
-        let currentCompanyQuery = null;
+        // 初始化分页状态
+        const paginationState = {
+            daily: { page: 1, total: 0, pageSize: 10 },
+            company: { page: 1, total: 0, pageSize: 10 },
+            industry: { page: 1, total: 0, pageSize: 10 },
+            product: { page: 1, total: 0, pageSize: 10 },
+            attention: {
+                company: { page: 1, total: 0, pageSize: 10 },
+                industry: { page: 1, total: 0, pageSize: 10 },
+                product: { page: 1, total: 0, pageSize: 10 }
+            }
+        };
+
+        // 当前查询参数
+        let currentQueries = {
+            daily: { startDate: '', endDate: '', content: '' },
+            company: { company: '', startDate: '', endDate: '', content: '' },
+            industry: { industry: '', type: '', startDate: '', endDate: '', content: '' },
+            product: { product: '', startDate: '', endDate: '', content: '' }
+        };
+
+        // Toast 实例
+        const toast = new bootstrap.Toast(document.getElementById('liveToast'));
+
+        // 显示通知
+        function showToast(message, type = 'success') {
+            const toastBody = document.querySelector('.toast-body');
+            toastBody.textContent = message;
+            const toastHeader = document.querySelector('.toast-header');
+            toastHeader.className = 'toast-header';
+            if (type === 'success') {
+                toastHeader.classList.add('bg-success', 'text-white');
+            } else if (type === 'error') {
+                toastHeader.classList.add('bg-danger', 'text-white');
+            } else {
+                toastHeader.classList.add('bg-info', 'text-white');
+            }
+            toast.show();
+        }
+
+        // 格式化日期
+        function formatDate(date) {
+            if (!date) return '';
+            const d = new Date(date);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+        }
+
+        // 格式化时间
+        function formatDateTime(dateTime) {
+            if (!dateTime) return '';
+            const d = new Date(dateTime);
+            return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')} ${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
+        }
+
+        // --- 公共函数 ---
+
+        // 加载关注列表
+        function loadAttentionList(type, containerId, search = '') {
+            const container = document.getElementById(containerId);
+            container.innerHTML = '<p class="text-muted text-center">加载中...</p>';
+
+            let url = `/api/attentions?type=${type}&pageNum=1&pageSize=20`;
+            if (search) {
+                url += `&search=${encodeURIComponent(search)}`;
+            }
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.records && data.records.length > 0) {
+                        let html = '';
+                        data.records.forEach(item => {
+                            html += `
+                                    <div class="attention-item" data-name="${item.name}" data-type="${type}">
+                                        <div class="d-flex justify-content-between align-items-center">
+                                            <span><i class="bi bi-star-fill text-warning me-1"></i>${item.name}</span>
+                                            <span class="attention-count">${item.times}</span>
+                                        </div>
+                                    </div>
+                                `;
+                        });
+                        container.innerHTML = html;
+
+                        // 添加点击事件
+                        document.querySelectorAll(`#${containerId} .attention-item`).forEach(item => {
+                            item.addEventListener('click', function() {
+                                const name = this.getAttribute('data-name');
+                                const type = this.getAttribute('data-type');
+
+                                // 根据类型填充到对应的输入框
+                                if (type === 'company') {
+                                    document.getElementById('companyNameSearch').value = name;
+                                    const tab = new bootstrap.Tab(document.getElementById('company-tab'));
+                                    tab.show();
+                                    document.getElementById('searchCompanyBtn').click();
+                                } else if (type === 'industry') {
+                                    document.getElementById('industryNameSearch').value = name;
+                                    const tab = new bootstrap.Tab(document.getElementById('industry-tab'));
+                                    tab.show();
+                                    document.getElementById('searchIndustryBtn').click();
+                                } else if (type === 'product') {
+                                    document.getElementById('productNameSearch').value = name;
+                                    const tab = new bootstrap.Tab(document.getElementById('product-tab'));
+                                    tab.show();
+                                    document.getElementById('searchProductBtn').click();
+                                }
+                            });
+                        });
+                    } else {
+                        container.innerHTML = '<p class="text-muted text-center">暂无关注记录</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('加载关注列表失败:', error);
+                    container.innerHTML = `<p class="text-danger text-center">加载失败: ${error.message}</p>`;
+                });
+        }
 
         // --- 大盘复盘相关 ---
 
@@ -237,8 +1101,8 @@
             fetch(`/api/daily-records?startDate=${date}&endDate=${date}&pageNum=1&pageSize=1`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data && data.length > 0) {
-                        document.getElementById('dailyContent').value = data[0].content || '';
+                    if (data.records && data.records.length > 0) {
+                        document.getElementById('dailyContent').value = data.records[0].content || '';
                     } else {
                         document.getElementById('dailyContent').value = '';
                     }
@@ -250,18 +1114,18 @@
         }
 
         // 页面加载或切换到大盘标签时，加载当天记录
-        document.getElementById('daily-tab').addEventListener('shown.bs.tab', function (event) {
+        document.getElementById('daily-tab').addEventListener('shown.bs.tab', function() {
             loadDailyRecordForDate(document.getElementById('dailyDate').value);
+            loadAttentionList('company', 'dailyAttentionList'); // 大盘也显示公司关注
         });
-        loadDailyRecordForDate(today); // 页面初次加载时也执行
 
         // 保存大盘复盘
         document.getElementById('saveDailyBtn').addEventListener('click', function() {
             const date = document.getElementById('dailyDate').value;
-            const content = document.getElementById('dailyContent').value;
+            const content = document.getElementById('dailyContent').value.trim();
 
             if (!date || !content) {
-                alert('日期和内容不能为空！');
+                showToast('日期和内容不能为空！', 'error');
                 return;
             }
 
@@ -280,37 +1144,52 @@
                     throw new Error('保存失败');
                 })
                 .then(data => {
-                    alert(`大盘复盘保存成功！影响行数: ${data}`);
-                    console.log('保存成功:', data);
-                    // 保存后，重新加载当前查询结果
-                    if (currentDailyQuery) {
-                        fetchDailyRecords(currentDailyQuery.params, currentDailyQuery.page);
+                    showToast(`大盘复盘保存成功！影响行数: ${data}`);
+                    // 保存后重新加载查询结果
+                    if (currentQueries.daily.content || currentQueries.daily.startDate || currentQueries.daily.endDate) {
+                        fetchDailyRecords(currentQueries.daily, paginationState.daily.page);
                     } else {
-                        fetchDailyRecords({}, 1); // 重新加载默认查询
+                        fetchDailyRecords({}, 1);
                     }
                 })
                 .catch(error => {
-                    alert('保存失败: ' + error.message);
+                    showToast('保存失败: ' + error.message, 'error');
                     console.error('Error:', error);
                 });
         });
 
-        // 查询大盘记录 (分页)
+        // 查询大盘记录
         function fetchDailyRecords(params, page) {
-            dailyPage = page;
-            let url = `/api/daily-records?pageNum=${page}&pageSize=10`;
-            const paramPairs = [];
-            if (params.startDate) paramPairs.push(`startDate=${params.startDate}`);
-            if (params.endDate) paramPairs.push(`endDate=${params.endDate}`);
-            if (params.content) paramPairs.push(`content=${encodeURIComponent(params.content)}`);
-            if (paramPairs.length > 0) url += '&' + paramPairs.join('&');
+            paginationState.daily.page = page;
+            currentQueries.daily = params;
 
-            currentDailyQuery = { params, page };
+            let url = `/api/daily-records?pageNum=${page}&pageSize=${paginationState.daily.pageSize}`;
+            const queryParams = [];
+            if (params.startDate) queryParams.push(`startDate=${params.startDate}`);
+            if (params.endDate) queryParams.push(`endDate=${params.endDate}`);
+            if (params.content) queryParams.push(`content=${encodeURIComponent(params.content)}`);
+
+            if (queryParams.length > 0) {
+                url += '&' + queryParams.join('&');
+            }
+
+            document.getElementById('dailyResults').innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-2 text-muted">正在加载数据...</p>
+                    </div>
+                `;
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    displayDailyResults(data, page);
+                    if (data.records) {
+                        paginationState.daily.total = data.total;
+                        displayDailyResults(data.records, page, data.total);
+                    } else {
+                        document.getElementById('dailyResults').innerHTML = '<p class="text-muted">未找到符合条件的记录。</p>';
+                        document.getElementById('dailyPagination').innerHTML = '';
+                    }
                 })
                 .catch(error => {
                     console.error('查询大盘记录失败:', error);
@@ -318,34 +1197,104 @@
                 });
         }
 
-        // 显示大盘结果和分页
-        function displayDailyResults(records, currentPage) {
+        // 显示大盘结果
+        function displayDailyResults(records, currentPage, total) {
             const container = document.getElementById('dailyResults');
-            const paginationContainer = document.getElementById('dailyPagination');
             if (!records || records.length === 0) {
                 container.innerHTML = '<p class="text-muted">未找到符合条件的记录。</p>';
-                paginationContainer.innerHTML = '';
+                document.getElementById('dailyPagination').innerHTML = '';
                 return;
             }
 
             let html = '';
             records.forEach(record => {
                 html += `
-                    <div class="record-item">
-                        <div class="record-date">${record.currentDay}</div>
-                        <div class="record-content">${record.content}</div>
-                    </div>
-                `;
+                        <div class="record-item">
+                            <div class="record-header">
+                                <div class="record-date">${record.currentDay}</div>
+                                <div class="record-actions">
+                                    <button class="btn btn-sm btn-outline-primary add-comment-btn" data-record-id="${record.id}" data-type="daily">
+                                        <i class="bi bi-chat-square-text"></i> 评论
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="record-content">${record.content}</div>
+                            ${record.comments && record.comments.length > 0 ? `
+                            <div class="record-comments">
+                                <small class="text-muted">评论 (${record.comments.length})</small>
+                                ${record.comments.map(comment => `
+                                    <div class="comment-item">
+                                        <div>${comment.content}</div>
+                                        <div class="comment-date">${formatDateTime(comment.createTime)}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
             });
             container.innerHTML = html;
 
-            // 简单分页 (假设总页数未知，这里只显示上一页/下一页)
-            // 如果后端提供总数，可以构建完整分页
-            paginationContainer.innerHTML = `
-                ${currentPage > 1 ? `<li class="page-item"><a class="page-link" href="#" onclick="changeDailyPage(${currentPage - 1})">上一页</a></li>` : '<li class="page-item disabled"><a class="page-link" href="#">上一页</a></li>'}
-                <li class="page-item active"><a class="page-link" href="#">${currentPage}</a></li>
-                <li class="page-item"><a class="page-link" href="#" onclick="changeDailyPage(${currentPage + 1})">下一页</a></li>
-            `;
+            // 添加评论按钮事件
+            document.querySelectorAll('.add-comment-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const recordId = this.getAttribute('data-record-id');
+                    const type = this.getAttribute('data-type');
+                    addComment(recordId, type);
+                });
+            });
+
+            // 生成分页
+            generatePagination('daily', currentPage, total, paginationState.daily.pageSize);
+        }
+
+        // 生成分页
+        function generatePagination(type, currentPage, total, pageSize) {
+            const totalPages = Math.ceil(total / pageSize);
+            const paginationContainer = document.getElementById(`${type}Pagination`);
+
+            if (totalPages <= 1) {
+                paginationContainer.innerHTML = '';
+                return;
+            }
+
+            let html = '';
+
+            // 上一页
+            html += `<li class="page-item ${currentPage === 1 ? 'disabled' : ''}">
+                            <a class="page-link" href="#" onclick="changePage('${type}', ${currentPage - 1})">上一页</a>
+                         </li>`;
+
+            // 页码
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, currentPage + 2);
+
+            if (startPage > 1) {
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage('${type}', 1)">1</a></li>`;
+                if (startPage > 2) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+            }
+
+            for (let i = startPage; i <= endPage; i++) {
+                html += `<li class="page-item ${i === currentPage ? 'active' : ''}">
+                                <a class="page-link" href="#" onclick="changePage('${type}', ${i})">${i}</a>
+                             </li>`;
+            }
+
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    html += `<li class="page-item disabled"><span class="page-link">...</span></li>`;
+                }
+                html += `<li class="page-item"><a class="page-link" href="#" onclick="changePage('${type}', ${totalPages})">${totalPages}</a></li>`;
+            }
+
+            // 下一页
+            html += `<li class="page-item ${currentPage === totalPages ? 'disabled' : ''}">
+                            <a class="page-link" href="#" onclick="changePage('${type}', ${currentPage + 1})">下一页</a>
+                         </li>`;
+
+            paginationContainer.innerHTML = html;
         }
 
         // 搜索按钮事件
@@ -355,7 +1304,7 @@
                 endDate: document.getElementById('dailyEndDate').value,
                 content: document.getElementById('dailySearchKeyword').value.trim()
             };
-            fetchDailyRecords(params, 1); // 搜索时回到第一页
+            fetchDailyRecords(params, 1);
         });
 
         // 重置按钮事件
@@ -363,34 +1312,65 @@
             document.getElementById('dailyStartDate').value = '';
             document.getElementById('dailyEndDate').value = '';
             document.getElementById('dailySearchKeyword').value = '';
-            // 重置查询即为查询所有
             fetchDailyRecords({}, 1);
         });
 
-        // 页面加载时默认查询所有大盘记录
-        fetchDailyRecords({}, 1);
+        // 快捷日期选择
+        document.querySelectorAll('[data-date]').forEach(item => {
+            item.addEventListener('click', function() {
+                const dateType = this.getAttribute('data-date');
+                const today = new Date();
 
+                if (dateType === 'today') {
+                    document.getElementById('dailyStartDate').value = today.toISOString().split('T')[0];
+                    document.getElementById('dailyEndDate').value = today.toISOString().split('T')[0];
+                } else if (dateType === 'yesterday') {
+                    const yesterday = new Date(today);
+                    yesterday.setDate(today.getDate() - 1);
+                    document.getElementById('dailyStartDate').value = yesterday.toISOString().split('T')[0];
+                    document.getElementById('dailyEndDate').value = yesterday.toISOString().split('T')[0];
+                } else if (dateType === 'last7') {
+                    const lastWeek = new Date(today);
+                    lastWeek.setDate(today.getDate() - 7);
+                    document.getElementById('dailyStartDate').value = lastWeek.toISOString().split('T')[0];
+                    document.getElementById('dailyEndDate').value = today.toISOString().split('T')[0];
+                } else if (dateType === 'last30') {
+                    const lastMonth = new Date(today);
+                    lastMonth.setDate(today.getDate() - 30);
+                    document.getElementById('dailyStartDate').value = lastMonth.toISOString().split('T')[0];
+                    document.getElementById('dailyEndDate').value = today.toISOString().split('T')[0];
+                }
+
+                // 自动搜索
+                document.getElementById('searchDailyBtn').click();
+            });
+        });
 
         // --- 个股复盘相关 ---
 
-        // 监听公司名输入框的blur事件，自动加载当天记录
-        document.getElementById('companyName').addEventListener('blur', function() {
-            const companyName = this.value.trim();
+        // 加载当天个股记录
+        document.getElementById('loadCompanyBtn').addEventListener('click', function() {
+            const companyName = document.getElementById('companyName').value.trim();
             const date = document.getElementById('companyDate').value;
-            if (!companyName || !date) return;
+            if (!companyName || !date) {
+                showToast('请先填写公司名称和日期');
+                return;
+            }
 
             fetch(`/api/company-records?company=${encodeURIComponent(companyName)}&startDate=${date}&endDate=${date}&pageNum=1&pageSize=1`)
                 .then(response => response.json())
                 .then(data => {
-                    if (data && data.length > 0) {
-                        document.getElementById('companyContent').value = data[0].content || '';
+                    if (data.records && data.records.length > 0) {
+                        document.getElementById('companyContent').value = data.records[0].content || '';
+                        showToast('已加载当天记录');
                     } else {
                         document.getElementById('companyContent').value = '';
+                        showToast('未找到当天记录，可以新建');
                     }
                 })
                 .catch(error => {
                     console.error('加载当天个股记录失败:', error);
-                    document.getElementById('companyContent').value = '';
+                    showToast('加载失败: ' + error.message, 'error');
                 });
         });
 
@@ -398,10 +1378,10 @@
         document.getElementById('saveCompanyBtn').addEventListener('click', function() {
             const date = document.getElementById('companyDate').value;
             const company = document.getElementById('companyName').value.trim();
-            const content = document.getElementById('companyContent').value;
+            const content = document.getElementById('companyContent').value.trim();
 
             if (!date || !company || !content) {
-                alert('日期、公司名称和内容不能为空！');
+                showToast('日期、公司名称和内容不能为空！', 'error');
                 return;
             }
 
@@ -421,41 +1401,56 @@
                     throw new Error('保存失败');
                 })
                 .then(data => {
-                    alert(`个股复盘保存成功！影响行数: ${data}`);
-                    console.log('保存成功:', data);
-                    // 保存后，重新加载当前查询结果
-                    if (currentCompanyQuery) {
-                        fetchCompanyRecords(currentCompanyQuery.params, currentCompanyQuery.page);
+                    showToast(`个股复盘保存成功！影响行数: ${data}`);
+                    // 保存后重新加载查询结果
+                    if (currentQueries.company.company) {
+                        fetchCompanyRecords(currentQueries.company, paginationState.company.page);
                     }
                 })
                 .catch(error => {
-                    alert('保存失败: ' + error.message);
+                    showToast('保存失败: ' + error.message, 'error');
                     console.error('Error:', error);
                 });
         });
 
-        // 查询个股记录 (分页)
+        // 查询个股记录
         function fetchCompanyRecords(params, page) {
-            companyPage = page;
             if (!params.company) {
                 document.getElementById('companyResults').innerHTML = '<p class="text-muted">请输入公司名称进行查询。</p>';
                 document.getElementById('companyPagination').innerHTML = '';
                 return;
             }
 
-            let url = `/api/company-records?company=${encodeURIComponent(params.company)}&pageNum=${page}&pageSize=10`;
-            const paramPairs = [];
-            if (params.startDate) paramPairs.push(`startDate=${params.startDate}`);
-            if (params.endDate) paramPairs.push(`endDate=${params.endDate}`);
-            if (params.content) paramPairs.push(`content=${encodeURIComponent(params.content)}`);
-            if (paramPairs.length > 0) url += '&' + paramPairs.join('&');
+            paginationState.company.page = page;
+            currentQueries.company = params;
 
-            currentCompanyQuery = { params, page };
+            let url = `/api/company-records?company=${encodeURIComponent(params.company)}&pageNum=${page}&pageSize=${paginationState.company.pageSize}`;
+            const queryParams = [];
+            if (params.startDate) queryParams.push(`startDate=${params.startDate}`);
+            if (params.endDate) queryParams.push(`endDate=${params.endDate}`);
+            if (params.content) queryParams.push(`content=${encodeURIComponent(params.content)}`);
+
+            if (queryParams.length > 0) {
+                url += '&' + queryParams.join('&');
+            }
+
+            document.getElementById('companyResults').innerHTML = `
+                    <div class="text-center py-4">
+                        <div class="loading-spinner"></div>
+                        <p class="mt-2 text-muted">正在加载数据...</p>
+                    </div>
+                `;
 
             fetch(url)
                 .then(response => response.json())
                 .then(data => {
-                    displayCompanyResults(data, page);
+                    if (data.records) {
+                        paginationState.company.total = data.total;
+                        displayCompanyResults(data.records, page, data.total);
+                    } else {
+                        document.getElementById('companyResults').innerHTML = '<p class="text-muted">未找到符合条件的记录。</p>';
+                        document.getElementById('companyPagination').innerHTML = '';
+                    }
                 })
                 .catch(error => {
                     console.error('查询个股记录失败:', error);
@@ -463,32 +1458,58 @@
                 });
         }
 
-        // 显示个股结果和分页
-        function displayCompanyResults(records, currentPage) {
+        // 显示个股结果
+        function displayCompanyResults(records, currentPage, total) {
             const container = document.getElementById('companyResults');
-            const paginationContainer = document.getElementById('companyPagination');
             if (!records || records.length === 0) {
                 container.innerHTML = '<p class="text-muted">未找到符合条件的记录。</p>';
-                paginationContainer.innerHTML = '';
+                document.getElementById('companyPagination').innerHTML = '';
                 return;
             }
 
             let html = '';
             records.forEach(record => {
                 html += `
-                    <div class="record-item">
-                        <div class="record-date">${record.currentDay} - ${record.company}</div>
-                        <div class="record-content">${record.content}</div>
-                    </div>
-                `;
+                        <div class="record-item">
+                            <div class="record-header">
+                                <div>
+                                    <div class="record-date">${record.currentDay}</div>
+                                    <div class="record-company">${record.company}</div>
+                                </div>
+                                <div class="record-actions">
+                                    <button class="btn btn-sm btn-outline-success add-comment-btn" data-record-id="${record.id}" data-type="company">
+                                        <i class="bi bi-chat-square-text"></i> 评论
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="record-content">${record.content}</div>
+                            ${record.comments && record.comments.length > 0 ? `
+                            <div class="record-comments">
+                                <small class="text-muted">评论 (${record.comments.length})</small>
+                                ${record.comments.map(comment => `
+                                    <div class="comment-item">
+                                        <div>${comment.content}</div>
+                                        <div class="comment-date">${formatDateTime(comment.createTime)}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            ` : ''}
+                        </div>
+                    `;
             });
             container.innerHTML = html;
 
-            paginationContainer.innerHTML = `
-                ${currentPage > 1 ? `<li class="page-item"><a class="page-link" href="#" onclick="changeCompanyPage(${currentPage - 1})">上一页</a></li>` : '<li class="page-item disabled"><a class="page-link" href="#">上一页</a></li>'}
-                <li class="page-item active"><a class="page-link" href="#">${currentPage}</a></li>
-                <li class="page-item"><a class="page-link" href="#" onclick="changeCompanyPage(${currentPage + 1})">下一页</a></li>
-            `;
+            // 添加评论按钮事件
+            document.querySelectorAll('.add-comment-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const recordId = this.getAttribute('data-record-id');
+                    const type = this.getAttribute('data-type');
+                    addComment(recordId, type);
+                });
+            });
+
+            // 生成分页
+            generatePagination('company', currentPage, total, paginationState.company.pageSize);
         }
 
         // 搜索按钮事件
@@ -499,7 +1520,7 @@
                 endDate: document.getElementById('companyEndDate').value,
                 content: document.getElementById('companySearchKeyword').value.trim()
             };
-            fetchCompanyRecords(params, 1); // 搜索时回到第一页
+            fetchCompanyRecords(params, 1);
         });
 
         // 重置按钮事件
@@ -508,25 +1529,117 @@
             document.getElementById('companyStartDate').value = '';
             document.getElementById('companyEndDate').value = '';
             document.getElementById('companySearchKeyword').value = '';
-            document.getElementById('companyResults').innerHTML = '<p class="text-muted">请输入公司名称并点击“搜索”按钮。</p>';
+            document.getElementById('companyResults').innerHTML = '<p class="text-muted">请输入公司名称并点击"搜索"按钮。</p>';
             document.getElementById('companyPagination').innerHTML = '';
         });
 
-        // --- 分页按钮逻辑 ---
-        window.changeDailyPage = function(page) {
-            if (currentDailyQuery) {
-                fetchDailyRecords(currentDailyQuery.params, page);
-            } else {
-                fetchDailyRecords({}, page);
+        // 快捷选择公司
+        document.querySelectorAll('.quick-select-badge').forEach(badge => {
+            badge.addEventListener('click', function() {
+                const type = this.getAttribute('data-type');
+                const value = this.getAttribute('data-value');
+
+                if (type === 'company') {
+                    document.getElementById('companyNameSearch').value = value;
+                    document.getElementById('searchCompanyBtn').click();
+                } else if (type === 'industry') {
+                    document.getElementById('industryNameSearch').value = value;
+                    document.getElementById('searchIndustryBtn').click();
+                } else if (type === 'product') {
+                    document.getElementById('productNameSearch').value = value;
+                    document.getElementById('searchProductBtn').click();
+                }
+            });
+        });
+
+        // --- 页面加载时的初始化 ---
+
+        // 初始加载大盘记录
+        loadDailyRecordForDate(today);
+        loadAttentionList('company', 'dailyAttentionList');
+
+        // 初始加载关注列表
+        loadAttentionList('company', 'companyAttentionList');
+        loadAttentionList('industry', 'industryAttentionList');
+        loadAttentionList('product', 'productAttentionList');
+
+        // 初始加载分页数据
+        fetchDailyRecords({}, 1);
+        fetchCompanyRecords({ company: 'AAPL' }, 1);
+        fetchIndustryRecords({ industry: '科技' }, 1);
+        fetchProductRecords({ product: '新能源' }, 1);
+
+        // --- 全局分页切换函数 ---
+        window.changePage = function(type, page) {
+            if (type === 'daily') {
+                fetchDailyRecords(currentQueries.daily, page);
+            } else if (type === 'company') {
+                fetchCompanyRecords(currentQueries.company, page);
+            } else if (type === 'industry') {
+                fetchIndustryRecords(currentQueries.industry, page);
+            } else if (type === 'product') {
+                fetchProductRecords(currentQueries.product, page);
             }
         };
 
-        window.changeCompanyPage = function(page) {
-            if (currentCompanyQuery) {
-                fetchCompanyRecords(currentCompanyQuery.params, page);
+        // --- 评论功能 ---
+        function addComment(recordId, type) {
+            const comment = prompt(`请输入对这条${type === 'daily' ? '大盘' : type === 'company' ? '个股' : type === 'industry' ? '行业' : '产业'}记录的评论:`);
+            if (!comment || comment.trim() === '') return;
+
+            const url = `/api/${type}-records/${recordId}/comments`;
+            const body = {
+                currentDay: today,
+                content: comment.trim()
+            };
+
+            if (type === 'company') {
+                body.company = document.getElementById('companyNameSearch').value.trim() || '未知公司';
+            } else if (type === 'industry') {
+                body.industry = document.getElementById('industryNameSearch').value.trim() || '未知行业';
+            } else if (type === 'product') {
+                body.product = document.getElementById('productNameSearch').value.trim() || '未知产业';
             }
-        };
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+                .then(response => {
+                    if (response.ok) return response.text();
+                    throw new Error('评论失败');
+                })
+                .then(data => {
+                    showToast('评论添加成功！');
+                    // 重新加载当前查询
+                    if (type === 'daily') {
+                        fetchDailyRecords(currentQueries.daily, paginationState.daily.page);
+                    } else if (type === 'company') {
+                        fetchCompanyRecords(currentQueries.company, paginationState.company.page);
+                    } else if (type === 'industry') {
+                        fetchIndustryRecords(currentQueries.industry, paginationState.industry.page);
+                    } else if (type === 'product') {
+                        fetchProductRecords(currentQueries.product, paginationState.product.page);
+                    }
+                })
+                .catch(error => {
+                    showToast('评论失败: ' + error.message, 'error');
+                });
+        }
     });
+
+    // --- 行业复盘相关函数 ---
+    function fetchIndustryRecords(params, page) {
+        console.log('行业复盘功能待实现');
+    }
+
+    // --- 产业复盘相关函数 ---
+    function fetchProductRecords(params, page) {
+        console.log('产业复盘功能待实现');
+    }
 </script>
 </body>
 </html>
