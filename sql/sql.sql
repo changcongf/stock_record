@@ -114,7 +114,7 @@ CREATE TABLE `t_attention`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
     `name`        varchar(255) NOT NULL COMMENT '名字',
-    `type`        varchar(255) NOT NULL COMMENT '类型',
+    `type`        varchar(255) NOT NULL COMMENT '类型,包含industy, company, product',
     `create_time` datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `times`       int          NOT NULL COMMENT '次数',

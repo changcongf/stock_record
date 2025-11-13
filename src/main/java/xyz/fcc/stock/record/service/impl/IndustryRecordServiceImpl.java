@@ -7,6 +7,7 @@ import xyz.fcc.stock.record.entity.IndustryRecord;
 import xyz.fcc.stock.record.mapper.IndustryRecordMapper;
 import xyz.fcc.stock.record.mapper.IndustryCommentMapper;
 import xyz.fcc.stock.record.service.IndustryRecordService;
+import xyz.fcc.stock.record.service.AttentionService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +19,7 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
 
     private final IndustryRecordMapper industryRecordMapper;
     private final IndustryCommentMapper industryCommentMapper;
+    private final AttentionService attentionService;
 
     @Override
     public int saveIndustryRecord(IndustryRecordDTO industryRecordDTO) {
@@ -27,8 +29,14 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
         entity.setIndustry(industryRecordDTO.getIndustry());
         entity.setContent(industryRecordDTO.getContent());
         entity.setType(industryRecordDTO.getType());
-        entity.setInfo("兼容处理"); // info字段兼容处理
-        return industryRecordMapper.insertIndustryRecord(entity);
+        entity.setInfo("兼容处理");
+
+        int result = industryRecordMapper.insertIndustryRecord(entity);
+
+        // 更新attention
+        attentionService.incrementTimes(industryRecordDTO.getIndustry(), "industry");
+
+        return result;
     }
 
     @Override
@@ -94,6 +102,10 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
         dto.setCreateTime(entity.getCreateTime());
         dto.setUpdateTime(entity.getUpdateTime());
         dto.setInfo(entity.getInfo());
+
+        // 保存评论时也更新attention
+        attentionService.incrementTimes(entity.getIndustry(), "industry");
+
         return dto;
     }
 }

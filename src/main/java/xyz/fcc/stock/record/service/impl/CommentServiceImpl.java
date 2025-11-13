@@ -6,6 +6,7 @@ import xyz.fcc.stock.record.dto.*;
 import xyz.fcc.stock.record.entity.*;
 import xyz.fcc.stock.record.mapper.*;
 import xyz.fcc.stock.record.service.CommentService;
+import xyz.fcc.stock.record.service.AttentionService;
 
 @Service
 @RequiredArgsConstructor
@@ -15,6 +16,7 @@ public class CommentServiceImpl implements CommentService {
     private final CompanyCommentMapper companyCommentMapper;
     private final IndustryCommentMapper industryCommentMapper;
     private final ProductCommentMapper productCommentMapper;
+    private final AttentionService attentionService;
 
     @Override
     public int saveDailyComment(DailyCommentDTO commentDTO) {
@@ -23,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
         entity.setDailyRecordId(commentDTO.getDailyRecordId());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理"); // info字段兼容处理
+        entity.setInfo("兼容处理");
         return dailyCommentMapper.insertDailyComment(entity);
     }
 
@@ -35,8 +37,14 @@ public class CommentServiceImpl implements CommentService {
         entity.setCompany(commentDTO.getCompany());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理"); // info字段兼容处理
-        return companyCommentMapper.insertCompanyComment(entity);
+        entity.setInfo("兼容处理");
+
+        int result = companyCommentMapper.insertCompanyComment(entity);
+
+        // 保存评论时更新attention
+        attentionService.incrementTimes(commentDTO.getCompany(), "company");
+
+        return result;
     }
 
     @Override
@@ -47,8 +55,14 @@ public class CommentServiceImpl implements CommentService {
         entity.setIndustry(commentDTO.getIndustry());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理"); // info字段兼容处理
-        return industryCommentMapper.insertIndustryComment(entity);
+        entity.setInfo("兼容处理");
+
+        int result = industryCommentMapper.insertIndustryComment(entity);
+
+        // 保存评论时更新attention
+        attentionService.incrementTimes(commentDTO.getIndustry(), "industry");
+
+        return result;
     }
 
     @Override
@@ -59,7 +73,13 @@ public class CommentServiceImpl implements CommentService {
         entity.setProduct(commentDTO.getProduct());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理"); // info字段兼容处理
-        return productCommentMapper.insertProductComment(entity);
+        entity.setInfo("兼容处理");
+
+        int result = productCommentMapper.insertProductComment(entity);
+
+        // 保存评论时更新attention
+        attentionService.incrementTimes(commentDTO.getProduct(), "product");
+
+        return result;
     }
 }

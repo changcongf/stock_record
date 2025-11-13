@@ -7,6 +7,7 @@ import xyz.fcc.stock.record.entity.ProductRecord;
 import xyz.fcc.stock.record.mapper.ProductRecordMapper;
 import xyz.fcc.stock.record.mapper.ProductCommentMapper;
 import xyz.fcc.stock.record.service.ProductRecordService;
+import xyz.fcc.stock.record.service.AttentionService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +19,7 @@ public class ProductRecordServiceImpl implements ProductRecordService {
 
     private final ProductRecordMapper productRecordMapper;
     private final ProductCommentMapper productCommentMapper;
+    private final AttentionService attentionService;
 
     @Override
     public int saveProductRecord(ProductRecordDTO productRecordDTO) {
@@ -26,8 +28,14 @@ public class ProductRecordServiceImpl implements ProductRecordService {
         entity.setCurrentDay(productRecordDTO.getCurrentDay());
         entity.setProduct(productRecordDTO.getProduct());
         entity.setContent(productRecordDTO.getContent());
-        entity.setInfo("兼容处理"); // info字段兼容处理
-        return productRecordMapper.insertProductRecord(entity);
+        entity.setInfo("兼容处理");
+
+        int result = productRecordMapper.insertProductRecord(entity);
+
+        // 更新attention
+        attentionService.incrementTimes(productRecordDTO.getProduct(), "product");
+
+        return result;
     }
 
     @Override
@@ -89,6 +97,10 @@ public class ProductRecordServiceImpl implements ProductRecordService {
         dto.setCreateTime(entity.getCreateTime());
         dto.setUpdateTime(entity.getUpdateTime());
         dto.setInfo(entity.getInfo());
+
+        // 保存评论时也更新attention
+        attentionService.incrementTimes(entity.getProduct(), "product");
+
         return dto;
     }
 }

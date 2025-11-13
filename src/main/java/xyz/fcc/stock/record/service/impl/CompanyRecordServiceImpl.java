@@ -7,6 +7,7 @@ import xyz.fcc.stock.record.entity.CompanyRecord;
 import xyz.fcc.stock.record.mapper.CompanyRecordMapper;
 import xyz.fcc.stock.record.mapper.CompanyCommentMapper;
 import xyz.fcc.stock.record.service.CompanyRecordService;
+import xyz.fcc.stock.record.service.AttentionService;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -18,6 +19,7 @@ public class CompanyRecordServiceImpl implements CompanyRecordService {
 
     private final CompanyRecordMapper companyRecordMapper;
     private final CompanyCommentMapper companyCommentMapper;
+    private final AttentionService attentionService;
 
     @Override
     public int saveCompanyRecord(CompanyRecordDTO companyRecordDTO) {
@@ -26,8 +28,14 @@ public class CompanyRecordServiceImpl implements CompanyRecordService {
         entity.setCurrentDay(companyRecordDTO.getCurrentDay());
         entity.setCompany(companyRecordDTO.getCompany());
         entity.setContent(companyRecordDTO.getContent());
-        entity.setInfo("兼容处理"); // info字段兼容处理
-        return companyRecordMapper.insertCompanyRecord(entity);
+        entity.setInfo("兼容处理");
+
+        int result = companyRecordMapper.insertCompanyRecord(entity);
+
+        // 更新attention
+        attentionService.incrementTimes(companyRecordDTO.getCompany(), "company");
+
+        return result;
     }
 
     @Override
@@ -89,6 +97,10 @@ public class CompanyRecordServiceImpl implements CompanyRecordService {
         dto.setCreateTime(entity.getCreateTime());
         dto.setUpdateTime(entity.getUpdateTime());
         dto.setInfo(entity.getInfo());
+
+        // 保存评论时也更新attention
+        attentionService.incrementTimes(entity.getCompany(), "company");
+
         return dto;
     }
 }
