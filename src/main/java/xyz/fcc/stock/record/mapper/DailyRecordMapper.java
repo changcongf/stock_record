@@ -14,7 +14,7 @@ public interface DailyRecordMapper {
      * @param record DailyRecord 实体对象
      * @return 影响的行数
      */
-    int insertDailyRecord(DailyRecord record);
+    int insertDailyRecord(@Param("record")DailyRecord record);
 
     /**
      * 根据 currentDay 范围和 content 关键字动态分页查询 t_daily_record 记录

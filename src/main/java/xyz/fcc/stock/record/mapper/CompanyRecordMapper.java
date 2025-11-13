@@ -14,7 +14,7 @@ public interface CompanyRecordMapper {
      * @param record CompanyRecord 实体对象
      * @return 影响的行数
      */
-    int insertCompanyRecord(CompanyRecord record);
+    int insertCompanyRecord(@Param("record") CompanyRecord record);
 
     /**
      * 根据 company, currentDay 范围和 content 关键字动态分页查询 t_company_record 记录

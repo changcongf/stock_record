@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface IndustryRecordMapper {
-    int insertIndustryRecord(IndustryRecord record);
+    int insertIndustryRecord(@Param("record") IndustryRecord record);
 
     List<IndustryRecord> selectIndustryRecordByConditionWithPaging(
             @Param("industry") String industry,

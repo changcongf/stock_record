@@ -1,22 +1,22 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<!DOCTYPE mapper
-        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
-        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 
 <mapper namespace="xyz.fcc.stock.record.mapper.CompanyRecordMapper">
     <insert id="insertCompanyRecord" parameterType="xyz.fcc.stock.record.entity.CompanyRecord">
         INSERT INTO t_company_record
         <trim prefix="(" suffix=")" suffixOverrides=",">
-            <if test="currentDay != null">current_day,</if>
-            <if test="company != null and company != ''">company,</if>
-            <if test="content != null">content,</if>
-            <if test="info != null">info,</if>
+            <if test="record.getCurrentDay() != null">current_day,</if>
+            <!-- 修正：统一使用 getter 方法 -->
+            <if test="record.getCompany() != null and record.getCompany() != ''">company,</if>
+            <if test="record.getContent() != null">content,</if>
+            <if test="record.getInfo() != null">info,</if>
         </trim>
         <trim prefix="VALUES (" suffix=")" suffixOverrides=",">
-            <if test="currentDay != null">#{currentDay},</if>
-            <if test="company != null and company != ''">#{company},</if>
-            <if test="content != null">#{content},</if>
-            <if test="info != null">#{info},</if>
+            <if test="record.getCurrentDay() != null">#{record.currentDay},</if>
+            <!-- 修正：统一使用 getter 方法 -->
+            <if test="record.getCompany() != null and record.getCompany() != ''">#{record.company},</if>
+            <if test="record.getContent() != null">#{record.content},</if>
+            <if test="record.getInfo() != null">#{record.info},</if>
         </trim>
         ON DUPLICATE KEY UPDATE
         content = VALUES(content),

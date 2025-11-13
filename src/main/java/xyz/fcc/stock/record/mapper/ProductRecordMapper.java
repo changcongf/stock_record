@@ -8,7 +8,7 @@ import java.util.List;
 
 @Mapper
 public interface ProductRecordMapper {
-    int insertProductRecord(ProductRecord record);
+    int insertProductRecord(@Param("record")ProductRecord record);
 
     List<ProductRecord> selectProductRecordByConditionWithPaging(
             @Param("product") String product,
