@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Company</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        .left-panel {
+            flex: 3;
+            min-width: 0;
+        }
+        .right-panel {
+            flex: 1;
+            min-width: 300px;
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .section h2 {
+            margin-top: 0;
+            color: #555;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 5px;
+            margin-bottom: 5px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.comment-btn {
+            background-color: #28a745;
+        }
+        button.comment-btn:hover {
+            background-color: #218838;
+        }
+        .comment-form {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            display: none;
+        }
+        .comment-form.show {
+            display: block;
+        }
+        .record-item {
+            border: 1px solid #eee;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+        .comments-section {
+            margin-top: 10px;
+            padding-top: 10px;
+            border-top: 1px solid #eee;
+        }
+        .comment-item {
+            background-color: #dee2e6;
+            padding: 8px;
+            margin: 5px 0;
+            border-radius: 3px;
+            font-size: 14px;
+        }
+        .pagination {
+            text-align: center;
+            margin: 20px 0;
+        }
+        .pagination button {
+            margin: 0 2px;
+        }
+        .attention-item {
+            padding: 8px;
+            border: 1px solid #ddd;
+            margin: 5px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .attention-item:hover {
+            background-color: #e9ecef;
+        }
+        .attention-item.selected {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+        }
+        .success {
+            color: green;
+            margin: 10px 0;
+        }
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Company</h1>
+
+    <div class="main-content">
+        <!-- 左侧面板：公司记录 -->
+        <div class="left-panel">
+            <!-- 创建/更新公司记录表单 -->
+            <div class="section">
+                <h2>创建/更新公司记录</h2>
+                <div class="form-group">
+                    <label for="companyNameInput">公司名称:</label>
+                    <input type="text" id="companyNameInput" placeholder="请输入公司名称" required>
+                </div>
+                <div class="form-group">
+                    <label for="companyContentInput">内容:</label>
+                    <textarea id="companyContentInput" rows="4" placeholder="请输入公司记录内容" required></textarea>
+                </div>
+                <button onclick="saveCompanyRecord()">保存记录</button>
+            </div>
+
+            <!-- 查询公司记录表单 -->
+            <div class="section">
+                <h2>查询公司记录</h2>
+                <div class="form-group">
+                    <label for="queryCompanyName">公司名称:</label>
+                    <input type="text" id="queryCompanyName" placeholder="请输入公司名称" required>
+                </div>
+                <div class="form-group">
+                    <label for="queryPageSize">每页大小:</label>
+                    <select id="queryPageSize" onchange="queryCompanyRecords()">
+                        <option value="10">10条</option>
+                        <option value="20">20条</option>
+                        <option value="50">50条</option>
+                        <option value="100">100条</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 公司记录列表 -->
+            <div class="section">
+                <h2>公司记录列表</h2>
+                <div id="companyRecordsList"></div>
+                <div id="companyPagination" class="pagination"></div>
+            </div>
+        </div>
+
+        <!-- 右侧面板：关注管理 -->
+        <div class="right-panel">
+            <h3>关注管理</h3>
+
+            <!-- 添加关注表单 -->
+            <div class="section">
+                <h4>添加关注</h4>
+                <div class="form-group">
+                    <label for="attentionName">公司名称:</label>
+                    <input type="text" id="attentionName" placeholder="请输入公司名称">
+                </div>
+                <button onclick="addAttention()">添加关注</button>
+            </div>
+
+            <!-- 关注列表 -->
+            <div class="section">
+                <h4>关注列表</h4>
+                <div id="attentionsList"></div>
+                <div id="attentionPagination" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="message"></div>
+</div>
+
+<script>
+    const API_BASE = 'http://localhost:8080/api';
+    let selectedAttention = null;
+
+    // 保存公司记录
+    async function saveCompanyRecord() {
+        const company = document.getElementById('companyNameInput').value;
+        const content = document.getElementById('companyContentInput').value;
+        const today = new Date().toISOString().split('T')[0]; // 固定为当前日期
+
+        if (!company || !content) {
+            showMessage('请填写公司名称和内容', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/company-records`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentDay: today,
+                    company: company,
+                    content: content
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`公司记录保存成功，影响行数: ${result}`, 'success');
+                // 清空内容输入框
+                document.getElementById('companyContentInput').value = '';
+                // 查询今天的内容
+                checkTodayContent(company);
+            } else {
+                const error = await response.json();
+                showMessage(`保存失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+
+    // 检查今天是否有内容
+    async function checkTodayContent(company) {
+        const today = new Date().toISOString().split('T')[0];
+
+        try {
+            const params = new URLSearchParams({
+                company: company,
+                startDate: today,
+                endDate: today,
+                pageNum: 1,
+                pageSize: 1
+            });
+
+            const response = await fetch(`${API_BASE}/company-records?${params}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                if (data.records && data.records.length > 0) {
+                    const record = data.records[0];
+                    document.getElementById('companyContentInput').value = record.content;
+                }
+            }
+        } catch (error) {
+            console.error('检查今天内容失败:', error);
+        }
+    }
+
+    // 查询公司记录
+    async function queryCompanyRecords() {
+        const company = document.getElementById('queryCompanyName').value;
+        const pageSize = document.getElementById('queryPageSize').value || 10;
+
+        if (!company) {
+            showMessage('公司名称为必填项', 'error');
+            return;
+        }
+
+        // 固定查询今天的数据
+        const today = new Date().toISOString().split('T')[0];
+
+        const params = new URLSearchParams({
+            company: company,
+            startDate: today,
+            endDate: today,
+            pageNum: 1,
+            pageSize: pageSize
+        });
+
+        try {
+            const response = await fetch(`${API_BASE}/company-records?${params}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                displayCompanyRecords(data);
+            } else {
+                const error = await response.json();
+                showMessage(`查询失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+
+    // 显示公司记录
+    function displayCompanyRecords(data) {
+        const container = document.getElementById('companyRecordsList');
+        const pagination = document.getElementById('companyPagination');
+
+        if (data.records.length === 0) {
+            container.innerHTML = '<p>没有找到记录</p>';
+            pagination.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+        data.records.forEach(record => {
+            html += `
+                    <div class="record-item">
+                        <div><strong>日期:</strong> ${record.currentDay}</div>
+                        <div><strong>公司:</strong> ${record.company}</div>
+                        <div><strong>内容:</strong> ${record.content}</div>
+                        <div><strong>创建时间:</strong> ${record.createTime ? new Date(record.createTime).toLocaleString() : ''}</div>
+                        <div><strong>更新时间:</strong> ${record.updateTime ? new Date(record.updateTime).toLocaleString() : ''}</div>
+
+                        <!-- 评论按钮 -->
+                        <button class="comment-btn" onclick="toggleCommentForm(${record.id}, '${record.company}', '${record.currentDay}')">添加评论</button>
+
+                        <!-- 评论表单 -->
+                        <div class="comment-form" id="commentForm_${record.id}">
+                            <h4>添加评论</h4>
+                            <textarea id="commentContent_${record.id}" placeholder="请输入评论内容" rows="2"></textarea>
+                            <button onclick="addCompanyComment(${record.id}, '${record.company}', '${record.currentDay}')">提交评论</button>
+                            <button class="cancel" onclick="hideCommentForm(${record.id})">取消</button>
+                        </div>
+
+                        <!-- 显示评论 -->
+                        <div class="comments-section">
+                            <h4>评论列表</h4>
+                            ${record.comments && record.comments.length > 0 ?
+                record.comments.map(comment => `
+                                    <div class="comment-item">
+                                        <div><strong>评论内容:</strong> ${comment.content}</div>
+                                        <div><strong>时间:</strong> ${comment.createTime ? new Date(comment.createTime).toLocaleString() : ''}</div>
+                                    </div>
+                                `).join('') :
+                '<p>暂无评论</p>'
+            }
+                        </div>
+                    </div>
+                `;
+        });
+
+        container.innerHTML = html;
+        pagination.innerHTML = ''; // 公司记录查询固定查今天，不需要分页
+    }
+
+    // 切换评论表单显示/隐藏
+    function toggleCommentForm(recordId, company, currentDay) {
+        const form = document.getElementById(`commentForm_${recordId}`);
+        if (form.classList.contains('show')) {
+            form.classList.remove('show');
+        } else {
+            // 隐藏其他评论表单
+            document.querySelectorAll('.comment-form').forEach(f => {
+                f.classList.remove('show');
+            });
+            form.classList.add('show');
+        }
+    }
+
+    // 隐藏评论表单
+    function hideCommentForm(recordId) {
+        const form = document.getElementById(`commentForm_${recordId}`);
+        form.classList.remove('show');
+    }
+
+    // 添加公司记录评论
+    async function addCompanyComment(recordId, company, currentDay) {
+        const commentContent = document.getElementById(`commentContent_${recordId}`).value;
+
+        if (!commentContent.trim()) {
+            showMessage('评论内容不能为空', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/company-records/${recordId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    company: company,
+                    currentDay: currentDay,
+                    content: commentContent
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`评论添加成功，影响行数: ${result}`, 'success');
+                // 清空评论输入框并隐藏表单，然后重新查询记录
+                document.getElementById(`commentContent_${recordId}`).value = '';
+                hideCommentForm(recordId);
+                queryCompanyRecords();
+            } else {
+                const error = await response.json();
+                showMessage(`评论添加失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+
+    // 添加关注
+    async function addAttention() {
+        const name = document.getElementById('attentionName').value;
+
+        if (!name) {
+            showMessage('请填写公司名称', 'error');
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_BASE}/attentions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    type: 'company' // 固定为company类型
+                })
+            });
+
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`关注添加成功，影响行数: ${result}`, 'success');
+                // 清空输入框并重新查询关注列表
+                document.getElementById('attentionName').value = '';
+                queryAttentions();
+            } else {
+                const error = await response.json();
+                showMessage(`添加失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+
+    // 查询关注列表
+    async function queryAttentions() {
+        try {
+            const params = new URLSearchParams({
+                type: 'company', // 固定为company类型
+                pageNum: 1, // 固定为第一页
+                pageSize: 20 // 固定为20条
+            });
+
+            const response = await fetch(`${API_BASE}/attentions?${params}`);
+
+            if (response.ok) {
+                const data = await response.json();
+                displayAttentions(data);
+            } else {
+                const error = await response.json();
+                showMessage(`查询失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+
+    // 显示关注列表
+    function displayAttentions(data) {
+        const container = document.getElementById('attentionsList');
+        const pagination = document.getElementById('attentionPagination');
+
+        if (data.records.length === 0) {
+            container.innerHTML = '<p>没有关注的公司</p>';
+            pagination.innerHTML = '';
+            return;
+        }
+
+        let html = '';
+        data.records.forEach(attention => {
+            const isSelected = selectedAttention === attention.name;
+            html += `
+                    <div class="attention-item ${isSelected ? 'selected' : ''}"
+                         onclick="selectAttention('${attention.name}')">
+                        <div>
+                            <strong>${attention.name}</strong>
+                        </div>
+                        <div style="font-size: 12px; color: #666;">
+                            关注次数: ${attention.times}
+                        </div>
+                    </div>
+                `;
+        });
+
+        container.innerHTML = html;
+        pagination.innerHTML = ''; // 关注列表固定查20条，不需要分页
+    }
+
+    // 选中关注项
+    function selectAttention(name) {
+        selectedAttention = name;
+        // 更新UI显示选中状态
+        document.querySelectorAll('.attention-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        event.target.closest('.attention-item').classList.add('selected');
+
+        // 将选中的公司名称填入查询框并触发查询
+        document.getElementById('queryCompanyName').value = name;
+        queryCompanyRecords();
+    }
+
+    // 显示消息
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = message;
+        messageDiv.className = type;
+
+        // 3秒后自动清除消息
+        setTimeout(() => {
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+        }, 3000);
+    }
+
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        // 设置当前日期（虽然不显示，但用于内部使用）
+        const today = new Date().toISOString().split('T')[0];
+
+        // 默认查询关注列表
+        queryAttentions();
+
+        // 监听公司名称输入框变化，触发查询
+        document.getElementById('queryCompanyName').addEventListener('input', function() {
+            if (this.value.trim()) {
+                queryCompanyRecords();
+            }
+        });
+
+        // 监听公司名称输入框变化，检查今天是否有内容
+        document.getElementById('companyNameInput').addEventListener('input', function() {
+            if (this.value.trim()) {
+                checkTodayContent(this.value.trim());
+            }
+        });
+    });
+</script>
+</body>
+</html>
