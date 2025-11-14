@@ -28,13 +28,16 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
         entity.setCurrentDay(industryRecordDTO.getCurrentDay());
         entity.setIndustry(industryRecordDTO.getIndustry());
         entity.setContent(industryRecordDTO.getContent());
-        entity.setType(industryRecordDTO.getType());
         entity.setInfo("兼容处理");
 
         int result = industryRecordMapper.insertIndustryRecord(entity);
 
         // 更新attention
-        attentionService.incrementTimes(industryRecordDTO.getIndustry(), "industry");
+        int cnt = attentionService.incrementTimes(industryRecordDTO.getIndustry(), "industry");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return result;
     }
@@ -42,7 +45,6 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
     @Override
     public PageResult<IndustryRecordDTO> getIndustryRecordsByCondition(
             String industry,
-            String type,
             LocalDate startDate,
             LocalDate endDate,
             String content,
@@ -53,11 +55,11 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
         int limit = pageSize;
 
         List<IndustryRecord> entities = industryRecordMapper.selectIndustryRecordByConditionWithPaging(
-                industry, type, startDate, endDate, content, offset, limit
+                industry, startDate, endDate, content, offset, limit
         );
 
-        long total = industryRecordMapper.countIndustryRecordsByCondition(
-                industry, type, startDate, endDate, content
+        int total = industryRecordMapper.countIndustryRecordsByCondition(
+                industry, startDate, endDate, content
         );
 
         List<IndustryRecordDTO> dtos = entities.stream()
@@ -86,7 +88,6 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
         dto.setCurrentDay(entity.getCurrentDay());
         dto.setIndustry(entity.getIndustry());
         dto.setContent(entity.getContent());
-        dto.setType(entity.getType());
         dto.setInfo(entity.getInfo());
         dto.setComments(getCommentsByRecordId(entity.getId()));
         return dto;
@@ -104,7 +105,10 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
         dto.setInfo(entity.getInfo());
 
         // 保存评论时也更新attention
-        attentionService.incrementTimes(entity.getIndustry(), "industry");
+        int cnt = attentionService.incrementTimes(entity.getIndustry(), "industry");
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return dto;
     }

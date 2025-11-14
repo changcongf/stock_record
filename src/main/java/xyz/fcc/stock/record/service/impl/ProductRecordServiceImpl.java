@@ -33,7 +33,11 @@ public class ProductRecordServiceImpl implements ProductRecordService {
         int result = productRecordMapper.insertProductRecord(entity);
 
         // 更新attention
-        attentionService.incrementTimes(productRecordDTO.getProduct(), "product");
+        int cnt = attentionService.incrementTimes(productRecordDTO.getProduct(), "product");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return result;
     }
@@ -54,7 +58,7 @@ public class ProductRecordServiceImpl implements ProductRecordService {
                 product, startDate, endDate, content, offset, limit
         );
 
-        long total = productRecordMapper.countProductRecordsByCondition(product, startDate, endDate, content);
+        int total = productRecordMapper.countProductRecordsByCondition(product, startDate, endDate, content);
 
         List<ProductRecordDTO> dtos = entities.stream()
                 .map(this::convertToDTOWithComments)
@@ -99,7 +103,11 @@ public class ProductRecordServiceImpl implements ProductRecordService {
         dto.setInfo(entity.getInfo());
 
         // 保存评论时也更新attention
-        attentionService.incrementTimes(entity.getProduct(), "product");
+        int cnt = attentionService.incrementTimes(entity.getProduct(), "product");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return dto;
     }

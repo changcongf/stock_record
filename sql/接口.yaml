@@ -245,7 +245,7 @@ paths:
         - name: company
           in: query
           description: 公司名称或标识
-          required: false
+          required: true
           schema:
             type: string
             example: "AAPL"
@@ -396,9 +396,6 @@ paths:
                 industry:
                   type: string
                   example: "科技"
-                type:
-                  type: string
-                  example: "半导体"
                 content:
                   type: string
                   example: "科技行业今日表现强劲。"
@@ -409,7 +406,6 @@ paths:
             example:
               currentDay: "2025-11-06"
               industry: "科技"
-              type: "半导体"
               content: "科技行业今日表现强劲。"
       responses:
         '200':
@@ -784,7 +780,6 @@ paths:
             example:
               name: "AAPL"
               type: "company"
-              times: 1
       responses:
         '200':
           description: 操作成功，返回影响的行数。

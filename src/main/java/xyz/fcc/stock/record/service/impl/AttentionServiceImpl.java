@@ -25,17 +25,10 @@ public class AttentionServiceImpl implements AttentionService {
         
         Attention existing = attentionMapper.selectAttentionByName(entity.getName());
         if (existing != null) {
-            entity.setId(existing.getId());
-            entity.setCreateTime(existing.getCreateTime());
-            if (entity.getTimes() == null) {
-                entity.setTimes(existing.getTimes());
-            }
-            return attentionMapper.insertOrUpdateAttention(entity);
+            throw new RuntimeException("未注册");
         } else {
             entity.setCreateTime(LocalDateTime.now());
-            if (entity.getTimes() == null) {
-                entity.setTimes(1);
-            }
+            entity.setTimes(1);
             return attentionMapper.insertOrUpdateAttention(entity);
         }
     }
@@ -62,17 +55,9 @@ public class AttentionServiceImpl implements AttentionService {
     }
 
     @Override
-    public void incrementTimes(String name, String type) {
+    public int incrementTimes(String name, String type) {
         // 先尝试递增，如果不存在则创建
-        int affected = attentionMapper.incrementTimesByName(name);
-        if (affected == 0) {
-            // 不存在，创建新记录
-            AttentionDTO dto = new AttentionDTO();
-            dto.setName(name);
-            dto.setType(type);
-            dto.setTimes(1);
-            saveAttention(dto);
-        }
+        return attentionMapper.incrementTimesByName(name);
     }
 
     private Attention convertToEntity(AttentionDTO dto) {

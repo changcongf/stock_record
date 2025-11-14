@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS `t_daily_record`;
 CREATE TABLE `t_daily_record`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -10,6 +11,7 @@ CREATE TABLE `t_daily_record`
     UNIQUE KEY `uk_current_day` (`current_day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `t_company_record`;
 CREATE TABLE `t_company_record`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -23,6 +25,7 @@ CREATE TABLE `t_company_record`
     UNIQUE KEY `uk_company_day` (`company`,`current_day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `t_industry_record`;
 CREATE TABLE `t_industry_record`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -31,12 +34,12 @@ CREATE TABLE `t_industry_record`
     `content`     text COLLATE utf8mb4_unicode_ci,
     `create_time` datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `type`        varchar(40),
     `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     UNIQUE KEY `uk_industry_day` (`industry`,`current_day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `t_product_record`;
 CREATE TABLE `t_product_record`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -50,6 +53,7 @@ CREATE TABLE `t_product_record`
     UNIQUE KEY `uk_product_day` (`product`,`current_day`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `t_daily_comment`;
 CREATE TABLE `t_daily_comment`
 (
     `id`              bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -61,9 +65,10 @@ CREATE TABLE `t_daily_comment`
     `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY               `idx_daily_record_id` (`daily_record_id`),
-    UNIQUE KEY `uk_current_day` (`current_day`)
+    UNIQUE KEY `uk_current_day_record_id` (`current_day`, `daily_record_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `t_company_comment`;
 CREATE TABLE `t_company_comment`
 (
     `id`                bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -76,9 +81,10 @@ CREATE TABLE `t_company_comment`
     `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                 `idx_company_record_id` (`company_record_id`),
-    UNIQUE KEY `uk_company_day` (`company`, `current_day`)
+    UNIQUE KEY `uk_company_day` (`company`, `current_day`, `company_record_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `t_industry_comment`;
 CREATE TABLE `t_industry_comment`
 (
     `id`                 bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -91,10 +97,10 @@ CREATE TABLE `t_industry_comment`
     `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                  `idx_industry_record_id` (`industry_record_id`),
-    UNIQUE KEY `uk_industry_day` (`industry`, `current_day`)
+    UNIQUE KEY `uk_industry_day` (`industry`, `current_day`, industry_record_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-
+DROP TABLE IF EXISTS `t_product_comment`;
 CREATE TABLE `t_product_comment`
 (
     `id`                bigint unsigned NOT NULL AUTO_INCREMENT,
@@ -107,9 +113,10 @@ CREATE TABLE `t_product_comment`
     `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                 `idx_product_record_id` (`product_record_id`),
-    UNIQUE KEY `uk_product_day` (`product`, `current_day`)
+    UNIQUE KEY `uk_product_day` (`product`, `current_day`, `product_record_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+DROP TABLE IF EXISTS `t_attention`;
 CREATE TABLE `t_attention`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT,

@@ -9,7 +9,6 @@ public interface IndustryRecordService {
 
     PageResult<IndustryRecordDTO> getIndustryRecordsByCondition(
             String industry,
-            String type,
             LocalDate startDate,
             LocalDate endDate,
             String content,

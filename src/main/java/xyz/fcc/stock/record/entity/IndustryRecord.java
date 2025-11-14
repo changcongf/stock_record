@@ -19,6 +19,5 @@ public class IndustryRecord {
     private String content;
     private LocalDateTime createTime;
     private LocalDateTime updateTime;
-    private String type;
     private String info;
 }

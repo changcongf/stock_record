@@ -33,7 +33,11 @@ public class CompanyRecordServiceImpl implements CompanyRecordService {
         int result = companyRecordMapper.insertCompanyRecord(entity);
 
         // 更新attention
-        attentionService.incrementTimes(companyRecordDTO.getCompany(), "company");
+        int cnt = attentionService.incrementTimes(companyRecordDTO.getCompany(), "company");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return result;
     }
@@ -99,7 +103,11 @@ public class CompanyRecordServiceImpl implements CompanyRecordService {
         dto.setInfo(entity.getInfo());
 
         // 保存评论时也更新attention
-        attentionService.incrementTimes(entity.getCompany(), "company");
+        int cnt = attentionService.incrementTimes(entity.getCompany(), "company");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return dto;
     }

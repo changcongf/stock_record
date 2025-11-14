@@ -44,8 +44,8 @@ public interface AttentionMapper {
 
     /**
      * 递增times字段
+     *
      * @param name 名称
-     * @return 影响的行数
      */
     int incrementTimesByName(@Param("name") String name);
 }

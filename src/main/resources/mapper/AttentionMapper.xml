@@ -21,7 +21,6 @@
             <if test="updateTime != null">#{updateTime},</if>
         </trim>
         ON DUPLICATE KEY UPDATE
-        times = VALUES(times),
         type = VALUES(type),
         update_time = VALUES(update_time)
     </insert>
@@ -69,15 +68,10 @@
     </select>
 
     <update id="incrementTimesByName">
-        INSERT INTO t_attention (name, times, type, create_time, update_time)
-        VALUES (#{name}, 1, 
-            <choose>
-                <when test="name.contains(' ')">"company"</when>
-                <otherwise>"industry"</otherwise>
-            </choose>,
-            CURRENT_TIMESTAMP, CURRENT_TIMESTAMP)
-        ON DUPLICATE KEY UPDATE
+        update t_attention
+        set
         times = times + 1,
         update_time = CURRENT_TIMESTAMP
+        where name = #{name}
     </update>
 </mapper>

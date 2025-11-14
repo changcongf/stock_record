@@ -18,6 +18,8 @@
             <if test="content != null">#{content},</if>
             <if test="info != null">#{info},</if>
         </trim>
+        ON DUPLICATE KEY UPDATE
+        content = CONCAT(CONCAT(content, '\n'), VALUES(content))
     </insert>
 
     <select id="selectIndustryCommentsByRecordId" resultType="xyz.fcc.stock.record.entity.IndustryComment">

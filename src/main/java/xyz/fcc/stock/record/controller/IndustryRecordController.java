@@ -37,7 +37,7 @@ public class IndustryRecordController {
             @RequestParam(defaultValue = "10") int pageSize
     ) {
         return ResponseEntity.ok(industryRecordService.getIndustryRecordsByCondition(
-                industry, type, startDate, endDate, content, pageNum, pageSize
+                industry, startDate, endDate, content, pageNum, pageSize
         ));
     }
 

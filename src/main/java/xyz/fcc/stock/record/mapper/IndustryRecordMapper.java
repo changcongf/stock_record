@@ -12,7 +12,6 @@ public interface IndustryRecordMapper {
 
     List<IndustryRecord> selectIndustryRecordByConditionWithPaging(
             @Param("industry") String industry,
-            @Param("type") String type,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             @Param("content") String content,
@@ -22,7 +21,6 @@ public interface IndustryRecordMapper {
 
     int countIndustryRecordsByCondition(
             @Param("industry") String industry,
-            @Param("type") String type,
             @Param("startDate") LocalDate startDate,
             @Param("endDate") LocalDate endDate,
             @Param("content") String content

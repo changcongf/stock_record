@@ -28,5 +28,5 @@ public interface AttentionService {
      * @param name 名称
      * @param type 类型
      */
-    void incrementTimes(String name, String type);
+    int incrementTimes(String name, String type);
 }

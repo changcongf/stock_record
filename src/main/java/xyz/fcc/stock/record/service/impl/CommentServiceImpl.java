@@ -42,7 +42,11 @@ public class CommentServiceImpl implements CommentService {
         int result = companyCommentMapper.insertCompanyComment(entity);
 
         // 保存评论时更新attention
-        attentionService.incrementTimes(commentDTO.getCompany(), "company");
+        int cnt = attentionService.incrementTimes(commentDTO.getCompany(), "company");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return result;
     }
@@ -60,7 +64,11 @@ public class CommentServiceImpl implements CommentService {
         int result = industryCommentMapper.insertIndustryComment(entity);
 
         // 保存评论时更新attention
-        attentionService.incrementTimes(commentDTO.getIndustry(), "industry");
+        int cnt = attentionService.incrementTimes(commentDTO.getIndustry(), "industry");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return result;
     }
@@ -78,7 +86,11 @@ public class CommentServiceImpl implements CommentService {
         int result = productCommentMapper.insertProductComment(entity);
 
         // 保存评论时更新attention
-        attentionService.incrementTimes(commentDTO.getProduct(), "product");
+        int cnt = attentionService.incrementTimes(commentDTO.getProduct(), "product");
+
+        if (cnt == 0) {
+            throw new RuntimeException("未注册");
+        }
 
         return result;
     }

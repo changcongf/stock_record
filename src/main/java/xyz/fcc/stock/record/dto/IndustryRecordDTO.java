@@ -14,7 +14,6 @@ public class IndustryRecordDTO {
     private LocalDate currentDay;
     private String industry;
     private String content;
-    private String type;
     private String info;
     private List<IndustryCommentDTO> comments;
 }
