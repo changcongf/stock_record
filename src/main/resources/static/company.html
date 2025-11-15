@@ -28,10 +28,9 @@
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            padding: 20px; /* 增加内边距 */
+            padding: 10px; /* 增加内边距 */
             background-color: #f8f9fa;
             border-radius: 10px; /* 增加圆角 */
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); /* 添加阴影效果 */
             min-width: 400px; /* 设置最小宽度 */
             width: auto; /* 自适应宽度 */
         }
@@ -52,7 +51,6 @@
         }
         .header input:focus {
             border-color: #007bff; /* 聚焦时边框颜色 */
-            box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1); /* 聚焦时阴影 */
         }
         .main-content {
             display: flex;
@@ -236,24 +234,51 @@
             flex-direction: column; /* 垂直排列图标 */
             gap: 5px; /* 图标间距 */
         }
+        /* 在 <style> 标签内找到 .pagination 相关的样式 */
         .pagination {
             text-align: center;
             margin: 15px 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 5px; /* 添加按钮间距 */
+            display: flex; /* 保持为flex布局 */
+            align-items: center; /* 垂直居中对齐 */
+            justify-content: center; /* 水平居中 */
+            flex-wrap: nowrap; /* 防止换行 */
+            gap: 2px; /* 减小按钮之间的间距 */
         }
+
+        /* 在 <style> 标签内找到 .pagination button 相关的样式 */
         .pagination button {
             margin: 0; /* 移除按钮默认margin */
-            padding: 3px 6px;
+            padding: 3px 6px; /* 调整按钮内边距，使其更紧凑 */
             font-size: 11px;
+            background-color: #6c757d; /* 新增：设置为灰色背景 */
+            color: white; /* 新增：设置文字为白色 */
+            border: 1px solid #6c757d; /* 新增：边框也为灰色 */
         }
-        .page-size-select {
-            padding: 2px 4px;
+        /* 可选：修改悬停时的颜色 */
+        .pagination button:hover {
+            background-color: #545b62; /* 新增：悬停时的灰色 */
+            border-color: #545b62; /* 新增：悬停时的边框色 */
+        }
+
+        /* 可选：修改当前页按钮的颜色，使其更突出 */
+        .pagination button[style*="background-color: #28a745"] { /* 针对当前页按钮的特殊样式 */
+            background-color: #28a745 !important; /* 保持绿色 */
+            color: white !important;
+            border-color: #28a745 !important;
+        }
+        .pagination button[style*="background-color: #28a745"]:hover { /* 当前页按钮悬停 */
+            background-color: #218838 !important; /* 绿色悬停 */
+            border-color: #218838 !important;
+        }
+        .page-size-select { /* 修改选择框样式 */
+            padding: 3px 6px; /* 调整内边距，与按钮内边距一致 */
             font-size: 11px;
-            margin-left: 8px;
+            margin-left: 5px; /* 与前面的按钮保持一点间距 */
+            min-width: auto; /* 允许选择框根据内容调整宽度 */
+            width: auto; /* 宽度由内容决定 */
+            border: 1px solid #ccc; /* 确保有边框 */
+            border-radius: 4px; /* 确保有圆角 */
+            box-sizing: border-box; /* 包含边框和内边距在宽度内 */
         }
         .top-controls { /* 用于对齐按钮和编辑框 */
             display: flex;
@@ -269,6 +294,8 @@
             max-width: 800px; /* 可选：设置最大宽度 */
             margin: 0 auto 10px; /* 上下边距0，左右自动居中，并在下方添加间距 */
             display: block; /* 确保块级居中 */
+            font-size: 20px; /* 新增：增大字体 */
+            font-weight: bold; /* 新增：加粗 */
         }
         .attention-item {
             padding: 8px 5px;
