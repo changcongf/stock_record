@@ -255,10 +255,25 @@
             font-size: 11px;
             margin-left: 8px;
         }
+        .top-controls { /* 用于对齐按钮和编辑框 */
+            display: flex;
+            justify-content: space-between; /* 左右对齐按钮 */
+            align-items: flex-start; /* 顶部对齐 */
+            margin: 0 auto 10px; /* 与编辑框居中对齐，并在下方添加间距 */
+            width: 80%; /* 与编辑框同宽 */
+            max-width: 800px; /* 与编辑框同最大宽 */
+        }
+        /* 调整编辑框样式 */
+        #companyContentInput {
+            width: 80%; /* 设置固定宽度，例如80% */
+            max-width: 800px; /* 可选：设置最大宽度 */
+            margin: 0 auto 10px; /* 上下边距0，左右自动居中，并在下方添加间距 */
+            display: block; /* 确保块级居中 */
+        }
         .attention-item {
             padding: 8px 5px;
             border: 1px solid #ddd;
-            margin: 2px 0;
+            margin: 2px 0; /* 确保关注项之间有垂直间距 */
             border-radius: 3px;
             cursor: pointer;
             transition: background-color 0.2s;
@@ -300,14 +315,14 @@
 
             <!-- 编辑内容区域 -->
             <div class="section">
-                <div class="form-group">
+                <div style="text-align: center;">
                     <textarea id="companyContentInput" rows="10" placeholder="暂无历史内容"></textarea>
                 </div>
-                <button class="save-btn" onclick="saveCompanyRecord()">保存</button> <!-- 添加类名 -->
 
-                <!-- 高级搜索 -->
-                <div style="margin-top: 10px;">
-                    <button class="advanced-search-btn" onclick="toggleAdvancedSearch()">高级搜索</button> <!-- 移除原类名 -->
+                <!-- 新增：用于对齐按钮的容器，设置与编辑框相同的宽度并居中 -->
+                <div class="top-controls">
+                    <button class="save-btn" onclick="saveCompanyRecord()">保存</button>
+                    <button class="advanced-search-btn" onclick="toggleAdvancedSearch()">高级搜索</button>
                 </div>
 
                 <!-- 高级搜索表单 -->
