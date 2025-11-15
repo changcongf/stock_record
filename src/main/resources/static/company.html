@@ -59,15 +59,17 @@
             gap: 20px;
         }
         .left-panel {
-            flex: 3;
+            flex: 8; /* 左侧更宽 */
             min-width: 0;
         }
         .right-panel {
-            flex: 1;
-            min-width: 300px;
+            flex: 1; /* 右侧更窄 */
+            min-width: 200px;
             background-color: #f8f9fa;
             padding: 15px;
             border-radius: 5px;
+            display: flex;
+            flex-direction: column; /* 垂直排列 */
         }
         .section {
             margin-bottom: 20px;
@@ -93,6 +95,7 @@
             font-size: 13px;
         }
         button {
+            /* 默认蓝色按钮样式 */
             background-color: #007bff;
             color: white;
             padding: 5px 10px;
@@ -106,13 +109,13 @@
         button:hover {
             background-color: #0056b3;
         }
-        button.comment-btn {
-            background-color: #28a745;
-            padding: 3px 6px;
-            font-size: 11px;
+        button.save-btn, /* 新增灰色按钮类 */
+        button.advanced-search-btn {
+            background-color: #6c757d; /* 统一为灰色 */
         }
-        button.comment-btn:hover {
-            background-color: #218838;
+        button.save-btn:hover,
+        button.advanced-search-btn:hover {
+            background-color: #545b62; /* 统一为灰色悬停色 */
         }
         button.add-attention-btn {
             background-color: #6c757d;
@@ -120,12 +123,21 @@
         button.add-attention-btn:hover {
             background-color: #545b62;
         }
-        button.advanced-search-btn {
-            background-color: #ffc107;
-            color: #212529;
+        button.comment-icon-btn, /* 评论图标按钮和评论展开图标按钮样式 */
+        button.comments-toggle-btn {
+            background-color: transparent;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+            padding: 2px 5px;
+            font-size: 11px;
+            display: flex; /* 使用flex布局对齐图标和文字 */
+            align-items: center;
+            gap: 2px; /* 图标和文字间距 */
         }
-        button.advanced-search-btn:hover {
-            background-color: #e0a800;
+        button.comment-icon-btn:hover,
+        button.comments-toggle-btn:hover {
+            background-color: #6c757d;
+            color: white;
         }
         .attention-form {
             display: none;
@@ -163,16 +175,21 @@
             margin-bottom: 10px;
             border-radius: 4px;
             background-color: #fafafa;
+            position: relative; /* 为评论按钮定位 */
         }
         .record-header {
             font-weight: bold;
             margin-bottom: 3px;
             font-size: 14px;
+            display: flex; /* 使用flex布局 */
+            justify-content: space-between; /* 两端对齐 */
         }
         .record-info {
             font-size: 11px;
             color: #666;
             margin-bottom: 3px;
+            display: flex; /* 使用flex布局 */
+            justify-content: space-between; /* 两端对齐 */
         }
         .record-content {
             margin-bottom: 8px;
@@ -180,8 +197,15 @@
         }
         .comments-section {
             margin-top: 8px;
-            padding-top: 8px;
+        }
+        .comments-list {
+            display: none; /* 默认隐藏 */
+            margin-top: 5px;
+            padding-top: 5px;
             border-top: 1px solid #eee;
+        }
+        .comments-section.expanded .comments-list {
+            display: block; /* 展开时显示 */
         }
         .comment-item {
             background-color: #dee2e6;
@@ -193,14 +217,24 @@
         .comment-header {
             font-weight: bold;
             margin-bottom: 2px;
+            display: inline; /* 与info同行 */
         }
         .comment-info {
             font-size: 10px;
             color: #666;
             margin-bottom: 2px;
+            display: inline; /* 与header同行 */
         }
         .comment-content {
             font-size: 12px;
+        }
+        .record-actions { /* 记录右侧操作区 */
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column; /* 垂直排列图标 */
+            gap: 5px; /* 图标间距 */
         }
         .pagination {
             text-align: center;
@@ -209,25 +243,29 @@
             align-items: center;
             justify-content: center;
             flex-wrap: wrap;
+            gap: 5px; /* 添加按钮间距 */
         }
         .pagination button {
-            margin: 0 1px;
+            margin: 0; /* 移除按钮默认margin */
             padding: 3px 6px;
             font-size: 11px;
         }
         .page-size-select {
-            margin-left: 8px;
             padding: 2px 4px;
             font-size: 11px;
+            margin-left: 8px;
         }
         .attention-item {
-            padding: 5px;
+            padding: 8px 5px;
             border: 1px solid #ddd;
             margin: 2px 0;
             border-radius: 3px;
             cursor: pointer;
             transition: background-color 0.2s;
-            font-size: 12px;
+            font-size: 14px; /* 字体变大 */
+            font-weight: bold; /* 字体加粗 */
+            display: flex; /* 使用flex布局 */
+            align-items: center; /* 垂直居中 */
         }
         .attention-item:hover {
             background-color: #e9ecef;
@@ -251,25 +289,25 @@
 <body>
 <div class="container">
 
-    <!-- 标题头：公司选择 -->
-    <div class="header">
-        <label>Company:</label>
-        <input type="text" id="selectedCompany" placeholder="公司名称">
-    </div>
-
     <div class="main-content">
         <!-- 左侧面板 -->
         <div class="left-panel">
+            <!-- 标题头：公司选择 -->
+            <div class="header">
+                <label>Company:</label>
+                <input type="text" id="selectedCompany" placeholder="公司名称">
+            </div>
+
             <!-- 编辑内容区域 -->
             <div class="section">
                 <div class="form-group">
                     <textarea id="companyContentInput" rows="10" placeholder="暂无历史内容"></textarea>
                 </div>
-                <button onclick="saveCompanyRecord()">保存</button>
+                <button class="save-btn" onclick="saveCompanyRecord()">保存</button> <!-- 添加类名 -->
 
                 <!-- 高级搜索 -->
                 <div style="margin-top: 10px;">
-                    <button class="advanced-search-btn" onclick="toggleAdvancedSearch()">高级搜索</button>
+                    <button class="advanced-search-btn" onclick="toggleAdvancedSearch()">高级搜索</button> <!-- 移除原类名 -->
                 </div>
 
                 <!-- 高级搜索表单 -->
@@ -291,36 +329,36 @@
                 </div>
             </div>
 
-            <!-- 每页大小选择和分页 -->
-            <div class="pagination">
-                <div id="companyPaginationControls"></div>
-            </div>
-
             <!-- 公司记录列表 -->
             <div id="companyRecordsList"></div>
         </div>
 
         <!-- 右侧面板 -->
         <div class="right-panel">
-            <!-- 添加关注按钮 -->
-            <button class="add-attention-btn" onclick="toggleAttentionForm()">添加关注</button>
+            <!-- 添加关注按钮和表单 -->
+            <div>
+                <button class="add-attention-btn" onclick="toggleAttentionForm()">添加关注</button>
 
-            <!-- 添加关注表单 -->
-            <div class="attention-form" id="attentionForm">
-                <div class="form-group">
-                    <input type="text" id="attentionName" placeholder="公司名称">
+                <!-- 添加关注表单 -->
+                <div class="attention-form" id="attentionForm">
+                    <div class="form-group">
+                        <input type="text" id="attentionName" placeholder="公司名称">
+                    </div>
+                    <button onclick="addAttention()">添加</button>
+                    <button class="cancel" onclick="hideAttentionForm()">取消</button>
                 </div>
-                <button onclick="addAttention()">添加</button>
-                <button class="cancel" onclick="hideAttentionForm()">取消</button>
             </div>
 
             <!-- 关注列表 -->
-            <div style="margin-top: 15px;">
+            <div style="flex: 1; overflow-y: auto;"> <!-- 占据剩余空间并允许滚动 -->
                 <div id="attentionsList"></div>
                 <div id="attentionPagination" class="pagination"></div>
             </div>
         </div>
     </div>
+
+    <!-- 新增：全局分页控件，放置在页面最下方 -->
+    <div class="pagination" id="globalPagination"></div>
 
     <div id="message"></div>
 </div>
@@ -459,7 +497,7 @@
 
         if (!company) {
             document.getElementById('companyRecordsList').innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">请选择公司名称</div>';
-            document.getElementById('companyPaginationControls').innerHTML = '';
+            document.getElementById('globalPagination').innerHTML = ''; // 清空全局分页
             return;
         }
 
@@ -495,24 +533,30 @@
     // 显示公司记录
     function displayCompanyRecords(data) {
         const container = document.getElementById('companyRecordsList');
-        const paginationContainer = document.getElementById('companyPaginationControls');
+        // const paginationContainer = document.getElementById('companyPaginationControls');
 
         if (data.records.length === 0) {
             container.innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">没有找到记录</div>';
-            paginationContainer.innerHTML = '';
+            document.getElementById('globalPagination').innerHTML = ''; // 清空全局分页
             return;
         }
 
         let html = '';
         data.records.forEach(record => {
+            // 计算评论数量
+            const commentCount = record.comments ? record.comments.length : 0;
             html += `
                     <div class="record-item">
-                        <div class="record-header">${record.currentDay}</div>
-                        <div class="record-info">${record.info || ''}</div>
+                        <div class="record-header">
+                            <span>${record.currentDay}  ${record.info || ''}</span> <!-- 日期和info字段合并，用两个空格分隔 -->
+                        </div>
                         <div class="record-content">${record.content}</div>
 
-                        <!-- 评论按钮 -->
-                        <button class="comment-btn" onclick="toggleCommentForm(${record.id}, '${record.company}', '${record.currentDay}')">添加评论</button>
+                        <!-- 记录右侧操作区 -->
+                        <div class="record-actions">
+                            <button class="comment-icon-btn" onclick="toggleCommentForm(${record.id}, '${record.company}', '${record.currentDay}')">💬</button>
+                            <button class="comments-toggle-btn" onclick="toggleComments(${record.id})">👁️ <span>(${commentCount})</span></button> <!-- 评论图标和数量 -->
+                        </div>
 
                         <!-- 评论表单 -->
                         <div class="comment-form" id="commentForm_${record.id}">
@@ -521,18 +565,19 @@
                             <button class="cancel" onclick="hideCommentForm(${record.id})">取消</button>
                         </div>
 
-                        <!-- 显示评论 -->
+                        <!-- 评论区域 -->
                         <div class="comments-section">
-                            ${record.comments && record.comments.length > 0 ?
+                            <div class="comments-list" id="commentsList_${record.id}">
+                                ${record.comments && record.comments.length > 0 ?
                 record.comments.map(comment => `
-                                    <div class="comment-item">
-                                        <div class="comment-header">${comment.currentDay}</div>
-                                        <div class="comment-info">${comment.info || ''}</div>
-                                        <div class="comment-content">${comment.content}</div>
-                                    </div>
-                                `).join('') :
-                ''
+                                        <div class="comment-item">
+                                            <span class="comment-header">${comment.currentDay}</span>  <span class="comment-info">${comment.info || ''}</span> <!-- 评论日期和info字段合并，用两个空格分隔 -->
+                                            <div class="comment-content">${comment.content}</div>
+                                        </div>
+                                    `).join('') :
+                '<div style="padding: 5px; font-size: 11px; color: #666;">暂无评论</div>'
             }
+                            </div>
                         </div>
                     </div>
                 `;
@@ -572,7 +617,13 @@
                 </select>
             `;
 
-        paginationContainer.innerHTML = paginationHtml;
+        document.getElementById('globalPagination').innerHTML = paginationHtml;
+    }
+
+    // 切换评论区域显示/隐藏
+    function toggleComments(recordId) {
+        const section = document.querySelector(`#commentsList_${recordId}`).closest('.comments-section');
+        section.classList.toggle('expanded');
     }
 
     // 切换评论表单显示/隐藏
@@ -598,6 +649,7 @@
     // 添加公司记录评论
     async function addCompanyComment(recordId, company, currentDay) {
         const commentContent = document.getElementById(`commentContent_${recordId}`).value;
+        const today = new Date().toISOString().split('T')[0];
 
         if (!commentContent.trim()) {
             showMessage('评论内容不能为空', 'error');
@@ -612,7 +664,7 @@
                 },
                 body: JSON.stringify({
                     company: company,
-                    currentDay: currentDay,
+                    currentDay: today,
                     content: commentContent
                 })
             });
@@ -711,7 +763,7 @@
                     <div class="attention-item ${isSelected ? 'selected' : ''}"
                          onclick="selectAttention('${attention.name}')">
                         <div>${attention.name}</div>
-                        <div style="font-size: 10px; color: #666;">${attention.times}次</div>
+                        <!-- div style="font-size: 10px; color: #666;">${attention.times}次</div> -->
                     </div>
                 `;
         });
@@ -824,7 +876,7 @@
                 queryCompanyRecords(false);
             } else {
                 document.getElementById('companyRecordsList').innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">请输入公司名称</div>';
-                document.getElementById('companyPaginationControls').innerHTML = '';
+                document.getElementById('globalPagination').innerHTML = ''; // 清空全局分页
                 document.getElementById('companyContentInput').value = '';
             }
         });
