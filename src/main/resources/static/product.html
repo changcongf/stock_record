@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Product</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* 添加居中对齐 */
+            width: 80%; /* 与编辑框容器宽度一致 */
+            max-width: 800px; /* 与编辑框最大宽度一致 */
+            margin: 0 auto 5px auto; /* 居中margin */
+        }
+        .header label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 15px;
+            color: #333;
+        }
+        .header input {
+            font-size: 20px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
+            width: 80%;
+            max-width: 800px;
+            transition: border-color 0.3s ease;
+        }
+        .header input:focus {
+            border-color: #007bff;
+        }
+        .main-content {
+            display: flex;
+            gap: 20px;
+        }
+        .left-panel {
+            flex: 8;
+            min-width: 0;
+        }
+        .right-panel {
+            flex: 1;
+            min-width: 200px;
+            background-color: transparent;
+            padding: 15px;
+            border-radius: 5px;
+            display: flex;
+            flex-direction: column;
+        }
+        .section {
+            margin-bottom: 20px;
+            width: 100%;
+            /* 移除边框 */
+            /* padding: 15px; */
+            /* border: 1px solid #ddd; */
+            /* border-radius: 5px; */
+        }
+        .form-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 3px;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.save-btn,
+        button.advanced-search-btn {
+            background-color: #6c757d;
+        }
+        button.save-btn:hover,
+        button.advanced-search-btn:hover {
+            background-color: #545b62;
+        }
+        button.add-attention-btn {
+            background-color: #6c757d;
+        }
+        button.add-attention-btn:hover {
+            background-color: #545b62;
+        }
+        button.comment-icon-btn,
+        button.comments-toggle-btn {
+            background-color: transparent;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+            padding: 2px 5px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        button.comment-icon-btn:hover,
+        button.comments-toggle-btn:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+        .attention-form {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .attention-form.show {
+            display: block;
+        }
+        .advanced-search {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .advanced-search.show {
+            display: block;
+        }
+        .comment-form {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            display: none;
+        }
+        .comment-form.show {
+            display: block;
+        }
+        .record-item {
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #fafafa;
+            position: relative;
+        }
+        .record-header {
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .record-info {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .record-content {
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .comments-section {
+            margin-top: 8px;
+        }
+        .comments-list {
+            display: none;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid #eee;
+        }
+        .comments-section.expanded .comments-list {
+            display: block;
+        }
+        .comment-item {
+            background-color: #dee2e6;
+            padding: 5px;
+            margin: 3px 0;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .comment-header {
+            font-weight: bold;
+            margin-bottom: 2px;
+            display: inline;
+        }
+        .comment-info {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 2px;
+            display: inline;
+        }
+        .comment-content {
+            font-size: 12px;
+        }
+        .record-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .pagination {
+            text-align: center;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 2px;
+        }
+        .pagination button {
+            margin: 0;
+            padding: 3px 6px;
+            font-size: 11px;
+            background-color: #6c757d;
+            color: white;
+            border: 1px solid #6c757d;
+        }
+        .pagination button:hover {
+            background-color: #545b62;
+            border-color: #545b62;
+        }
+        .pagination button[style*="background-color: #28a745"] {
+            background-color: #28a745 !important;
+            color: white !important;
+            border-color: #28a745 !important;
+        }
+        .pagination button[style*="background-color: #28a745"]:hover {
+            background-color: #218838 !important;
+            border-color: #218838 !important;
+        }
+        .page-size-select {
+            padding: 3px 6px;
+            font-size: 11px;
+            margin-left: 5px;
+            min-width: auto;
+            width: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        /* 修改按钮容器为右对齐 */
+        .top-controls {
+            display: flex;
+            justify-content: flex-end; /* 关键：右对齐 */
+            align-items: flex-start;
+            margin: 0 auto 10px; /* 保持水平居中，但内部右对齐 */
+            width: 80%;
+            max-width: 800px;
+            gap: 10px; /* 添加按钮间距 */
+        }
+        #productContentInput {
+            width: 80%;
+            max-width: 800px;
+            margin: 0 0 10px auto;
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.6; /* 添加行间距，可根据需要调整数值 */
+            letter-spacing: 0.5px; /* 字符间距，推荐值：0.3px ~ 1px */
+        }
+        .attention-item {
+            padding: 8px 5px;
+            border: 1px solid #ddd;
+            margin: 2px 0;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 14px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        .attention-item:hover {
+            background-color: #e9ecef;
+        }
+        .attention-item.selected {
+            background-color: #d4edda;
+            border-color: #28a745;
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        .success {
+            color: green;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="main-content">
+        <!-- 左侧面板 -->
+        <div class="left-panel">
+            <!-- 标题头：产业选择 -->
+            <div class="header">
+                <input type="text" id="selectedProduct" placeholder="Product">
+            </div>
+            <!-- 编辑内容区域 -->
+            <div class="section">
+                <div style="text-align: center;">
+                    <textarea id="productContentInput" rows="10" placeholder="请输入"></textarea>
+                </div>
+                <!-- 新增：用于对齐按钮的容器，设置与编辑框相同的宽度并居中 -->
+                <div class="top-controls">
+                    <button class="save-btn" onclick="saveProductRecord()">保存</button>
+                    <button class="advanced-search-btn" onclick="toggleAdvancedSearch()">🔍</button>
+                </div>
+                <!-- 高级搜索表单 -->
+                <div class="advanced-search" id="advancedSearchForm">
+                    <div class="form-group">
+                        <label>开始日期:</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label>结束日期:</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    <div class="form-group">
+                        <label>内容关键字:</label>
+                        <input type="text" id="contentKeyword" placeholder="模糊搜索内容">
+                    </div>
+                    <button onclick="queryProductRecords(true)">查询历史记录</button>
+                    <button class="cancel" onclick="hideAdvancedSearch()">取消</button>
+                </div>
+            </div>
+            <!-- 产业记录列表 -->
+            <div id="productRecordsList"></div>
+        </div>
+        <!-- 右侧面板 -->
+        <div class="right-panel">
+            <!-- 添加关注按钮和表单 -->
+            <div>
+                <button class="add-attention-btn" onclick="toggleAttentionForm()">添加关注</button>
+                <!-- 添加关注表单 -->
+                <div class="attention-form" id="attentionForm">
+                    <div class="form-group">
+                        <input type="text" id="attentionName" placeholder="产业名称">
+                    </div>
+                    <button onclick="addAttention()">添加</button>
+                    <button class="cancel" onclick="hideAttentionForm()">取消</button>
+                </div>
+            </div>
+            <!-- 关注列表 -->
+            <div style="flex: 1; overflow-y: auto;">
+                <div id="attentionsList"></div>
+                <div id="attentionPagination" class="pagination"></div>
+            </div>
+        </div>
+    </div>
+    <!-- 新增：全局分页控件，放置在页面最下方 -->
+    <div class="pagination" id="globalPagination"></div>
+    <div id="message"></div>
+</div>
+<script>
+    const API_BASE = 'http://localhost:8080/api';
+    let selectedAttention = null;
+    let currentQueryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        product: '',
+        startDate: '',
+        endDate: '',
+        content: ''
+    };
+    let attentionPageParams = {
+        pageNum: 1,
+        pageSize: 20
+    };
+    // 切换添加关注表单显示/隐藏
+    function toggleAttentionForm() {
+        const form = document.getElementById('attentionForm');
+        if (form.classList.contains('show')) {
+            hideAttentionForm();
+        } else {
+            form.classList.add('show');
+        }
+    }
+    // 隐藏添加关注表单
+    function hideAttentionForm() {
+        const form = document.getElementById('attentionForm');
+        form.classList.remove('show');
+        document.getElementById('attentionName').value = '';
+    }
+    // 切换高级搜索显示/隐藏
+    function toggleAdvancedSearch() {
+        const form = document.getElementById('advancedSearchForm');
+        if (form.classList.contains('show')) {
+            hideAdvancedSearch();
+        } else {
+            form.classList.add('show');
+        }
+    }
+    // 隐藏高级搜索
+    function hideAdvancedSearch() {
+        const form = document.getElementById('advancedSearchForm');
+        form.classList.remove('show');
+        // 清空高级搜索条件并查询今日记录
+        document.getElementById('startDate').value = '';
+        document.getElementById('endDate').value = '';
+        document.getElementById('contentKeyword').value = '';
+        currentQueryParams.startDate = '';
+        currentQueryParams.endDate = '';
+        currentQueryParams.content = '';
+        queryProductRecords(false);
+    }
+    // 保存产业记录
+    async function saveProductRecord() {
+        const product = document.getElementById('selectedProduct').value;
+        const content = document.getElementById('productContentInput').value;
+        const today = new Date().toISOString().split('T')[0]; // 固定为当前日期
+
+        if (!product || !content) {
+            showMessage('请填写产业名称和内容', 'error');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE}/product-records`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentDay: today,
+                    product: product,
+                    content: content
+                })
+            });
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`今日记录保存成功: ${result}`, 'success');
+                // 保存后查询今日记录
+                const today = new Date().toISOString().split('T')[0];
+                currentQueryParams.product = product;
+                currentQueryParams.startDate = today;
+                currentQueryParams.endDate = today;
+                currentQueryParams.pageNum = 1;
+                queryProductRecords(false);
+            } else {
+                const error = await response.json();
+                showMessage(`保存失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 查询今日产业记录（用于编辑时预填充内容）
+    async function loadTodayContent(product) {
+        const today = new Date().toISOString().split('T')[0];
+        try {
+            const params = new URLSearchParams({
+                product: product,
+                startDate: today,
+                endDate: today,
+                pageNum: 1,
+                pageSize: 1
+            });
+            const response = await fetch(`${API_BASE}/product-records?${params}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.records && data.records.length > 0) {
+                    const record = data.records[0];
+                    document.getElementById('productContentInput').value = record.content;
+                } else {
+                    // 如果今天没有记录，清空内容框
+                    document.getElementById('productContentInput').value = '';
+                }
+            }
+        } catch (error) {
+            console.error('加载今日内容失败:', error);
+        }
+    }
+    // 查询产业记录
+    async function queryProductRecords(isAdvancedSearch) {
+        const product = document.getElementById('selectedProduct').value;
+        // 如果是高级搜索，使用高级搜索的输入框值；否则使用产业选择框的值
+        let queryProduct = product;
+        if (isAdvancedSearch) {
+            queryProduct = document.getElementById('selectedProduct').value || document.getElementById('contentKeyword').value || '';
+        }
+
+        const params = new URLSearchParams({
+            pageNum: currentQueryParams.pageNum,
+            pageSize: currentQueryParams.pageSize
+        });
+
+        if (queryProduct) params.append('product', queryProduct);
+        if (isAdvancedSearch) {
+            if (currentQueryParams.startDate) params.append('startDate', currentQueryParams.startDate);
+            if (currentQueryParams.endDate) params.append('endDate', currentQueryParams.endDate);
+            if (currentQueryParams.content) params.append('content', currentQueryParams.content);
+        }
+        try {
+            const response = await fetch(`${API_BASE}/product-records?${params}`);
+            if (response.ok) {
+                const data = await response.json();
+                displayProductRecords(data);
+            } else {
+                const error = await response.json();
+                showMessage(`查询失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 显示产业记录
+    function displayProductRecords(data) {
+        const container = document.getElementById('productRecordsList');
+        if (data.records.length === 0) {
+            container.innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">没有找到记录</div>';
+            document.getElementById('globalPagination').innerHTML = ''; // 清空全局分页
+            return;
+        }
+        let html = '';
+        data.records.forEach(record => {
+            // 计算评论数量
+            const commentCount = record.comments ? record.comments.length : 0;
+            html += `
+                    <div class="record-item">
+                        <div class="record-header">
+                            <span>${record.currentDay}  ${record.info || ''}</span> <!-- 日期和info字段合并，用两个空格分隔 -->
+                        </div>
+                        <div class="record-content">${record.content}</div>
+                        <!-- 记录右侧操作区 -->
+                        <div class="record-actions">
+                            <button class="comment-icon-btn" onclick="toggleCommentForm(${record.id}, '${record.product}', '${record.currentDay}')">💬</button>
+                            <button class="comments-toggle-btn" onclick="toggleComments(${record.id})">👁️ <span>(${commentCount})</span></button> <!-- 评论图标和数量 -->
+                        </div>
+                        <!-- 评论表单 -->
+                        <div class="comment-form" id="commentForm_${record.id}">
+                            <textarea id="commentContent_${record.id}" placeholder="评论内容" rows="2"></textarea>
+                            <button onclick="addProductComment(${record.id}, '${record.product}', '${record.currentDay}')">提交</button>
+                            <button class="cancel" onclick="hideCommentForm(${record.id})">取消</button>
+                        </div>
+                        <!-- 评论区域 -->
+                        <div class="comments-section">
+                            <div class="comments-list" id="commentsList_${record.id}">
+                                ${record.comments && record.comments.length > 0 ?
+                record.comments.map(comment => `
+                                        <div class="comment-item">
+                                            <span class="comment-header">${comment.currentDay}</span>  <span class="comment-info">${comment.info || ''}</span> <!-- 评论日期和info字段合并，用两个空格分隔 -->
+                                            <div class="comment-content">${comment.content}</div>
+                                        </div>
+                                    `).join('') :
+                '<div style="padding: 5px; font-size: 11px; color: #666;">暂无评论</div>'
+            }
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+        container.innerHTML = html;
+        // 生成分页控件
+        let paginationHtml = '';
+        // 上一页
+        if (data.pageNum > 1) {
+            paginationHtml += `<button onclick="changePage(${data.pageNum - 1})">上一页</button>`;
+        }
+        // 页码
+        for (let i = 1; i <= data.pages; i++) {
+            if (i === data.pageNum) {
+                paginationHtml += `<button style="background-color: #28a745; color: white;" onclick="changePage(${i})">${i}</button>`;
+            } else {
+                paginationHtml += `<button onclick="changePage(${i})">${i}</button>`;
+            }
+        }
+        // 下一页
+        if (data.pageNum < data.pages) {
+            paginationHtml += `<button onclick="changePage(${data.pageNum + 1})">下一页</button>`;
+        }
+        // 每页大小选择
+        paginationHtml += `
+                <select class="page-size-select" onchange="changePageSize(this.value)">
+                    <option value="10" ${currentQueryParams.pageSize === 10 ? 'selected' : ''}>10条</option>
+                    <option value="20" ${currentQueryParams.pageSize === 20 ? 'selected' : ''}>20条</option>
+                    <option value="50" ${currentQueryParams.pageSize === 50 ? 'selected' : ''}>50条</option>
+                    <option value="100" ${currentQueryParams.pageSize === 100 ? 'selected' : ''}>100条</option>
+                </select>
+            `;
+        document.getElementById('globalPagination').innerHTML = paginationHtml;
+    }
+    // 切换评论区域显示/隐藏
+    function toggleComments(recordId) {
+        const section = document.querySelector(`#commentsList_${recordId}`).closest('.comments-section');
+        section.classList.toggle('expanded');
+    }
+    // 切换评论表单显示/隐藏
+    function toggleCommentForm(recordId, product, currentDay) {
+        const form = document.getElementById(`commentForm_${recordId}`);
+        if (form.classList.contains('show')) {
+            form.classList.remove('show');
+        } else {
+            // 隐藏其他评论表单
+            document.querySelectorAll('.comment-form').forEach(f => {
+                f.classList.remove('show');
+            });
+            form.classList.add('show');
+        }
+    }
+    // 隐藏评论表单
+    function hideCommentForm(recordId) {
+        const form = document.getElementById(`commentForm_${recordId}`);
+        form.classList.remove('show');
+    }
+    // 添加产业记录评论
+    async function addProductComment(recordId, product, currentDay) {
+        const commentContent = document.getElementById(`commentContent_${recordId}`).value;
+        const today = new Date().toISOString().split('T')[0];
+        if (!commentContent.trim()) {
+            showMessage('评论内容不能为空', 'error');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE}/product-records/${recordId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    product: product,
+                    currentDay: today,
+                    content: commentContent
+                })
+            });
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`评论添加成功: ${result}`, 'success');
+                // 清空评论输入框并隐藏表单，然后重新查询记录
+                document.getElementById(`commentContent_${recordId}`).value = '';
+                hideCommentForm(recordId);
+                queryProductRecords(false);
+            } else {
+                const error = await response.json();
+                showMessage(`评论添加失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 添加关注
+    async function addAttention() {
+        const name = document.getElementById('attentionName').value;
+        if (!name) {
+            showMessage('请填写产业名称', 'error');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE}/attentions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name: name,
+                    type: 'product' // 固定为product类型
+                })
+            });
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`关注添加成功: ${result}`, 'success');
+                // 清空输入框并隐藏表单，重新查询关注列表
+                document.getElementById('attentionName').value = '';
+                hideAttentionForm();
+                queryAttentions();
+            } else {
+                const error = await response.json();
+                showMessage(`添加失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 查询关注列表
+    async function queryAttentions() {
+        try {
+            const params = new URLSearchParams({
+                type: 'product', // 固定为product类型
+                pageNum: attentionPageParams.pageNum,
+                pageSize: attentionPageParams.pageSize
+            });
+            const response = await fetch(`${API_BASE}/attentions?${params}`);
+            if (response.ok) {
+                const data = await response.json();
+                displayAttentions(data);
+            } else {
+                const error = await response.json();
+                showMessage(`查询失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 显示关注列表
+    function displayAttentions(data) {
+        const container = document.getElementById('attentionsList');
+        const paginationContainer = document.getElementById('attentionPagination');
+        if (data.records.length === 0) {
+            container.innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">暂无关注</div>';
+            paginationContainer.innerHTML = '';
+            return;
+        }
+        let html = '';
+        data.records.forEach(attention => {
+            const isSelected = selectedAttention === attention.name;
+            html += `
+                    <div class="attention-item ${isSelected ? 'selected' : ''}"
+                         onclick="selectAttention('${attention.name}')">
+                        <div>${attention.name}</div>
+                        <!-- div style="font-size: 10px; color: #666;">${attention.times}次</div> -->
+                    </div>
+                `;
+        });
+        container.innerHTML = html;
+        // 生成关注列表分页控件
+        let paginationHtml = '';
+        // 上一页
+        if (data.pageNum > 1) {
+            paginationHtml += `<button onclick="changeAttentionPage(${data.pageNum - 1})">上一页</button>`;
+        }
+        // 页码
+        for (let i = 1; i <= data.pages; i++) {
+            if (i === data.pageNum) {
+                paginationHtml += `<button style="background-color: #28a745; color: white;" onclick="changeAttentionPage(${i})">${i}</button>`;
+            } else {
+                paginationHtml += `<button onclick="changeAttentionPage(${i})">${i}</button>`;
+            }
+        }
+        // 下一页
+        if (data.pageNum < data.pages) {
+            paginationHtml += `<button onclick="changeAttentionPage(${data.pageNum + 1})">下一页</button>`;
+        }
+        paginationContainer.innerHTML = paginationHtml;
+    }
+    // 选中关注项
+    function selectAttention(name) {
+        selectedAttention = name;
+        // 更新UI显示选中状态
+        document.querySelectorAll('.attention-item').forEach(item => {
+            item.classList.remove('selected');
+        });
+        event.target.closest('.attention-item').classList.add('selected');
+        // 将选中的产业名称填入产业选择框
+        document.getElementById('selectedProduct').value = name;
+        // 加载今天的内容到编辑框
+        loadTodayContent(name);
+        // 查询今日记录
+        const today = new Date().toISOString().split('T')[0];
+        currentQueryParams.product = name;
+        currentQueryParams.startDate = today;
+        currentQueryParams.endDate = today;
+        currentQueryParams.content = '';
+        currentQueryParams.pageNum = 1;
+        // 隐藏高级搜索表单
+        document.getElementById('advancedSearchForm').classList.remove('show');
+        queryProductRecords(false);
+    }
+    // 改变页码（产业记录）
+    function changePage(pageNum) {
+        currentQueryParams.pageNum = pageNum;
+        queryProductRecords(false);
+    }
+    // 改变每页大小（产业记录）
+    function changePageSize(pageSize) {
+        currentQueryParams.pageSize = parseInt(pageSize);
+        currentQueryParams.pageNum = 1; // 重置到第一页
+        queryProductRecords(false);
+    }
+    // 改变页码（关注列表）
+    function changeAttentionPage(pageNum) {
+        attentionPageParams.pageNum = pageNum;
+        queryAttentions();
+    }
+    // 显示消息
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = message;
+        messageDiv.className = type;
+        // 3秒后自动清除消息
+        setTimeout(() => {
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+        }, 3000);
+    }
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        // 默认查询关注列表第一页
+        queryAttentions();
+        // 监听产业选择输入框变化
+        document.getElementById('selectedProduct').addEventListener('input', function() {
+            const value = this.value.trim();
+            if (value) {
+                // 加载今天的内容到编辑框
+                loadTodayContent(value);
+                // 查询今日记录
+                const today = new Date().toISOString().split('T')[0];
+                currentQueryParams.product = value;
+                currentQueryParams.startDate = today;
+                currentQueryParams.endDate = today;
+                currentQueryParams.content = '';
+                currentQueryParams.pageNum = 1;
+                // 隐藏高级搜索表单
+                document.getElementById('advancedSearchForm').classList.remove('show');
+                queryProductRecords(false);
+            } else {
+                document.getElementById('productRecordsList').innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">请输入产业名称</div>';
+                document.getElementById('globalPagination').innerHTML = ''; // 清空全局分页
+                document.getElementById('productContentInput').value = '';
+            }
+        });
+    });
+</script>
+</body>
+</html>

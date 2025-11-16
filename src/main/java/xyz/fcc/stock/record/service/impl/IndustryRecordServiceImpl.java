@@ -28,7 +28,7 @@ public class IndustryRecordServiceImpl implements IndustryRecordService {
         entity.setCurrentDay(industryRecordDTO.getCurrentDay());
         entity.setIndustry(industryRecordDTO.getIndustry());
         entity.setContent(industryRecordDTO.getContent());
-        entity.setInfo("兼容处理");
+        entity.setInfo(null);
 
         int result = industryRecordMapper.insertIndustryRecord(entity);
 

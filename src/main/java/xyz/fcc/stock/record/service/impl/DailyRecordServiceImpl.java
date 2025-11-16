@@ -25,7 +25,7 @@ public class DailyRecordServiceImpl implements DailyRecordService {
         entity.setId(dailyRecordDTO.getId());
         entity.setCurrentDay(dailyRecordDTO.getCurrentDay());
         entity.setContent(dailyRecordDTO.getContent());
-        entity.setInfo("兼容处理"); // info字段兼容处理
+        entity.setInfo(null); // info字段兼容处理
         return dailyRecordMapper.insertDailyRecord(entity);
     }
 

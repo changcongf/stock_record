@@ -21,7 +21,7 @@ public class ProductRecordController {
     @PostMapping
     public ResponseEntity<Integer> createProductRecord(@RequestBody ProductRecordDTO productRecordDTO) {
         if (productRecordDTO.getInfo() == null || productRecordDTO.getInfo().isEmpty()) {
-            productRecordDTO.setInfo("兼容处理");
+            productRecordDTO.setInfo(null);
         }
         return ResponseEntity.ok(productRecordService.saveProductRecord(productRecordDTO));
     }

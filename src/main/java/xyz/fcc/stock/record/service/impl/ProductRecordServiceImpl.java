@@ -28,7 +28,7 @@ public class ProductRecordServiceImpl implements ProductRecordService {
         entity.setCurrentDay(productRecordDTO.getCurrentDay());
         entity.setProduct(productRecordDTO.getProduct());
         entity.setContent(productRecordDTO.getContent());
-        entity.setInfo("兼容处理");
+        entity.setInfo(null);
 
         int result = productRecordMapper.insertProductRecord(entity);
 

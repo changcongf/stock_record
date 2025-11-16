@@ -28,7 +28,7 @@ public class CompanyRecordServiceImpl implements CompanyRecordService {
         entity.setCurrentDay(companyRecordDTO.getCurrentDay());
         entity.setCompany(companyRecordDTO.getCompany());
         entity.setContent(companyRecordDTO.getContent());
-        entity.setInfo("兼容处理");
+        entity.setInfo(null);
 
         int result = companyRecordMapper.insertCompanyRecord(entity);
 

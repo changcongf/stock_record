@@ -21,7 +21,7 @@ public class IndustryRecordController {
     @PostMapping
     public ResponseEntity<Integer> createIndustryRecord(@RequestBody IndustryRecordDTO industryRecordDTO) {
         if (industryRecordDTO.getInfo() == null || industryRecordDTO.getInfo().isEmpty()) {
-            industryRecordDTO.setInfo("兼容处理");
+            industryRecordDTO.setInfo(null);
         }
         return ResponseEntity.ok(industryRecordService.saveIndustryRecord(industryRecordDTO));
     }

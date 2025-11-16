@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px; /* 减小页面内边距 */
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px; /* 缩小最大宽度 */
+            margin: 0 auto;
+            background-color: white;
+            padding: 15px; /* 减小容器内边距 */
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px; /* 调整标题下方间距 */
+        }
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: center; /* 居中对齐 */
+            width: 100%; /* 使用100%宽度 */
+            margin: 0 auto 5px auto; /* 居中margin */
+        }
+        .header label {
+            font-size: 16px;
+            font-weight: 600;
+            margin-right: 15px;
+            color: #333;
+        }
+        .header input {
+            font-size: 20px;
+            padding: 12px 15px;
+            border: none;
+            border-radius: 6px;
+            outline: none;
+            width: 80%;
+            max-width: 600px; /* 设置最大宽度，使其居中时不会过宽 */
+            transition: border-color 0.3s ease;
+        }
+        .header input:focus {
+            border-color: #007bff;
+        }
+        .main-content {
+            display: block; /* 改为单列布局 */
+        }
+        .left-panel {
+            width: 100%; /* 占满宽度 */
+            min-width: 0;
+        }
+        .right-panel {
+            display: none; /* 隐藏右侧面板 */
+        }
+        .section {
+            margin-bottom: 15px; /* 调整下方间距 */
+            width: 100%;
+        }
+        .form-group {
+            margin-bottom: 8px; /* 调整下方间距 */
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 6px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 13px;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 3px;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.save-btn,
+        button.advanced-search-btn {
+            background-color: #6c757d;
+        }
+        button.save-btn:hover,
+        button.advanced-search-btn:hover {
+            background-color: #545b62;
+        }
+        button.comment-icon-btn,
+        button.comments-toggle-btn {
+            background-color: transparent;
+            color: #6c757d;
+            border: 1px solid #6c757d;
+            padding: 2px 5px;
+            font-size: 11px;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        button.comment-icon-btn:hover,
+        button.comments-toggle-btn:hover {
+            background-color: #6c757d;
+            color: white;
+        }
+        .advanced-search {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+        }
+        .advanced-search.show {
+            display: block;
+        }
+        .comment-form {
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #e9ecef;
+            border-radius: 4px;
+            display: none;
+        }
+        .comment-form.show {
+            display: block;
+        }
+        .record-item {
+            border: 1px solid #eee;
+            padding: 10px;
+            margin-bottom: 10px;
+            border-radius: 4px;
+            background-color: #fafafa;
+            position: relative;
+        }
+        .record-header {
+            font-weight: bold;
+            margin-bottom: 3px;
+            font-size: 14px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .record-info {
+            font-size: 11px;
+            color: #666;
+            margin-bottom: 3px;
+            display: flex;
+            justify-content: space-between;
+        }
+        .record-content {
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .comments-section {
+            margin-top: 8px;
+        }
+        .comments-list {
+            display: none;
+            margin-top: 5px;
+            padding-top: 5px;
+            border-top: 1px solid #eee;
+        }
+        .comments-section.expanded .comments-list {
+            display: block;
+        }
+        .comment-item {
+            background-color: #dee2e6;
+            padding: 5px;
+            margin: 3px 0;
+            border-radius: 3px;
+            font-size: 12px;
+        }
+        .comment-header {
+            font-weight: bold;
+            margin-bottom: 2px;
+            display: inline;
+        }
+        .comment-info {
+            font-size: 10px;
+            color: #666;
+            margin-bottom: 2px;
+            display: inline;
+        }
+        .comment-content {
+            font-size: 12px;
+        }
+        .record-actions {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        .pagination {
+            text-align: center;
+            margin: 15px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: nowrap;
+            gap: 2px;
+        }
+        .pagination button {
+            margin: 0;
+            padding: 3px 6px;
+            font-size: 11px;
+            background-color: #6c757d;
+            color: white;
+            border: 1px solid #6c757d;
+        }
+        .pagination button:hover {
+            background-color: #545b62;
+            border-color: #545b62;
+        }
+        .pagination button[style*="background-color: #28a745"] {
+            background-color: #28a745 !important;
+            color: white !important;
+            border-color: #28a745 !important;
+        }
+        .pagination button[style*="background-color: #28a745"]:hover {
+            background-color: #218838 !important;
+            border-color: #218838 !important;
+        }
+        .page-size-select {
+            padding: 3px 6px;
+            font-size: 11px;
+            margin-left: 5px;
+            min-width: auto;
+            width: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        /* 修改按钮容器为居中对齐 */
+        .top-controls {
+            display: flex;
+            justify-content: center; /* 改为居中对齐 */
+            align-items: flex-start;
+            margin: 0 auto 10px; /* 保持水平居中 */
+            width: 80%;
+            max-width: 600px; /* 与编辑框最大宽度一致 */
+            gap: 10px; /* 添加按钮间距 */
+        }
+        #dailyContentInput {
+            width: 80%;
+            max-width: 600px; /* 设置最大宽度，使其居中时不会过宽 */
+            margin: 0 auto 10px; /* 居中margin */
+            display: block;
+            font-size: 20px;
+            font-weight: bold;
+            line-height: 1.6; /* 添加行间距，可根据需要调整数值 */
+            letter-spacing: 0.5px; /* 字符间距，推荐值：0.3px ~ 1px */
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+        .success {
+            color: green;
+            margin: 10px 0;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="main-content">
+        <!-- 左侧面板 (也是唯一面板) -->
+        <div class="left-panel">
+            <!-- 标题头：日期选择 (虽然没有输入框，但逻辑上是基于日期) -->
+            <div class="header">
+                <label>大盘记录</label>
+            </div>
+            <!-- 编辑内容区域 -->
+            <div class="section">
+                <div style="text-align: center;">
+                    <textarea id="dailyContentInput" rows="10" placeholder="请输入"></textarea>
+                </div>
+                <!-- 新增：用于对齐按钮的容器，设置与编辑框相同的宽度并居中 -->
+                <div class="top-controls">
+                    <button class="save-btn" onclick="saveDailyRecord()">保存</button>
+                    <button class="advanced-search-btn" onclick="toggleAdvancedSearch()">🔍</button>
+                </div>
+                <!-- 高级搜索表单 -->
+                <div class="advanced-search" id="advancedSearchForm">
+                    <div class="form-group">
+                        <label>开始日期:</label>
+                        <input type="date" id="startDate">
+                    </div>
+                    <div class="form-group">
+                        <label>结束日期:</label>
+                        <input type="date" id="endDate">
+                    </div>
+                    <div class="form-group">
+                        <label>内容关键字:</label>
+                        <input type="text" id="contentKeyword" placeholder="模糊搜索内容">
+                    </div>
+                    <button onclick="queryDailyRecords(true)">查询历史记录</button>
+                    <button class="cancel" onclick="hideAdvancedSearch()">取消</button>
+                </div>
+            </div>
+            <!-- 每日记录列表 -->
+            <div id="dailyRecordsList"></div>
+        </div>
+        <!-- 右侧面板 (隐藏) -->
+        <!-- <div class="right-panel">
+
+        </div> -->
+    </div>
+    <!-- 新增：全局分页控件，放置在页面最下方 -->
+    <div class="pagination" id="globalPagination"></div>
+    <div id="message"></div>
+</div>
+<script>
+    const API_BASE = 'http://localhost:8080/api';
+    // Daily 页面不使用关注列表，移除 selectedAttention 变量
+    let currentQueryParams = {
+        pageNum: 1,
+        pageSize: 10,
+        startDate: '',
+        endDate: '',
+        content: ''
+    };
+    // Daily 页面不使用关注列表，移除 attentionPageParams 变量
+
+    // 移除 toggleAttentionForm 函数
+    // 移除 hideAttentionForm 函数
+    // 移除 addAttention 函数
+    // 移除 queryAttentions 函数
+    // 移除 displayAttentions 函数
+    // 移除 selectAttention 函数
+    // 移除 changeAttentionPage 函数
+
+    // 切换高级搜索显示/隐藏
+    function toggleAdvancedSearch() {
+        const form = document.getElementById('advancedSearchForm');
+        if (form.classList.contains('show')) {
+            hideAdvancedSearch();
+        } else {
+            form.classList.add('show');
+        }
+    }
+    // 隐藏高级搜索
+    function hideAdvancedSearch() {
+        const form = document.getElementById('advancedSearchForm');
+        form.classList.remove('show');
+        // 清空高级搜索条件并查询今日记录
+        document.getElementById('startDate').value = '';
+        document.getElementById('endDate').value = '';
+        document.getElementById('contentKeyword').value = '';
+        currentQueryParams.startDate = '';
+        currentQueryParams.endDate = '';
+        currentQueryParams.content = '';
+        queryDailyRecords(false);
+    }
+    // 保存每日记录
+    async function saveDailyRecord() {
+        const content = document.getElementById('dailyContentInput').value;
+        const today = new Date().toISOString().split('T')[0]; // 固定为当前日期
+
+        if (!content) {
+            showMessage('请填写内容', 'error');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE}/daily-records`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentDay: today,
+                    content: content
+                })
+            });
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`今日记录保存成功: ${result}`, 'success');
+                // 保存后查询今日记录
+                const today = new Date().toISOString().split('T')[0];
+                currentQueryParams.startDate = today;
+                currentQueryParams.endDate = today;
+                currentQueryParams.pageNum = 1;
+                queryDailyRecords(false);
+            } else {
+                const error = await response.json();
+                showMessage(`保存失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 查询今日每日记录（用于编辑时预填充内容）
+    async function loadTodayContent() {
+        const today = new Date().toISOString().split('T')[0];
+        try {
+            const params = new URLSearchParams({
+                startDate: today,
+                endDate: today,
+                pageNum: 1,
+                pageSize: 1
+            });
+            const response = await fetch(`${API_BASE}/daily-records?${params}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.records && data.records.length > 0) {
+                    const record = data.records[0];
+                    document.getElementById('dailyContentInput').value = record.content;
+                } else {
+                    // 如果今天没有记录，清空内容框
+                    document.getElementById('dailyContentInput').value = '';
+                }
+            }
+        } catch (error) {
+            console.error('加载今日内容失败:', error);
+        }
+    }
+    // 查询每日记录
+    async function queryDailyRecords(isAdvancedSearch) {
+        const params = new URLSearchParams({
+            pageNum: currentQueryParams.pageNum,
+            pageSize: currentQueryParams.pageSize
+        });
+        // 如果是高级搜索
+        if (isAdvancedSearch) {
+            if (currentQueryParams.startDate) params.append('startDate', currentQueryParams.startDate);
+            if (currentQueryParams.endDate) params.append('endDate', currentQueryParams.endDate);
+            if (currentQueryParams.content) params.append('content', currentQueryParams.content);
+        } else {
+            // 非高级搜索，查询今日记录
+            const today = new Date().toISOString().split('T')[0];
+            params.append('startDate', today);
+            params.append('endDate', today);
+        }
+        try {
+            const response = await fetch(`${API_BASE}/daily-records?${params}`);
+            if (response.ok) {
+                const data = await response.json();
+                displayDailyRecords(data);
+            } else {
+                const error = await response.json();
+                showMessage(`查询失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 显示每日记录
+    function displayDailyRecords(data) {
+        const container = document.getElementById('dailyRecordsList');
+        if (data.records.length === 0) {
+            container.innerHTML = '<div style="padding: 10px; text-align: center; color: #666;">没有找到记录</div>';
+            document.getElementById('globalPagination').innerHTML = ''; // 清空全局分页
+            return;
+        }
+        let html = '';
+        data.records.forEach(record => {
+            // 计算评论数量
+            const commentCount = record.comments ? record.comments.length : 0;
+            html += `
+                    <div class="record-item">
+                        <div class="record-header">
+                            <span>${record.currentDay}  ${record.info || ''}</span> <!-- 日期和info字段合并，用两个空格分隔 -->
+                        </div>
+                        <div class="record-content">${record.content}</div>
+                        <!-- 记录右侧操作区 -->
+                        <div class="record-actions">
+                            <button class="comment-icon-btn" onclick="toggleCommentForm(${record.id}, '${record.currentDay}')">💬</button>
+                            <button class="comments-toggle-btn" onclick="toggleComments(${record.id})">👁️ <span>(${commentCount})</span></button> <!-- 评论图标和数量 -->
+                        </div>
+                        <!-- 评论表单 -->
+                        <div class="comment-form" id="commentForm_${record.id}">
+                            <textarea id="commentContent_${record.id}" placeholder="评论内容" rows="2"></textarea>
+                            <button onclick="addDailyComment(${record.id}, '${record.currentDay}')">提交</button>
+                            <button class="cancel" onclick="hideCommentForm(${record.id})">取消</button>
+                        </div>
+                        <!-- 评论区域 -->
+                        <div class="comments-section">
+                            <div class="comments-list" id="commentsList_${record.id}">
+                                ${record.comments && record.comments.length > 0 ?
+                record.comments.map(comment => `
+                                        <div class="comment-item">
+                                            <span class="comment-header">${comment.currentDay}</span>  <span class="comment-info">${comment.info || ''}</span> <!-- 评论日期和info字段合并，用两个空格分隔 -->
+                                            <div class="comment-content">${comment.content}</div>
+                                        </div>
+                                    `).join('') :
+                '<div style="padding: 5px; font-size: 11px; color: #666;">暂无评论</div>'
+            }
+                            </div>
+                        </div>
+                    </div>
+                `;
+        });
+        container.innerHTML = html;
+        // 生成分页控件
+        let paginationHtml = '';
+        // 上一页
+        if (data.pageNum > 1) {
+            paginationHtml += `<button onclick="changePage(${data.pageNum - 1})">上一页</button>`;
+        }
+        // 页码
+        for (let i = 1; i <= data.pages; i++) {
+            if (i === data.pageNum) {
+                paginationHtml += `<button style="background-color: #28a745; color: white;" onclick="changePage(${i})">${i}</button>`;
+            } else {
+                paginationHtml += `<button onclick="changePage(${i})">${i}</button>`;
+            }
+        }
+        // 下一页
+        if (data.pageNum < data.pages) {
+            paginationHtml += `<button onclick="changePage(${data.pageNum + 1})">下一页</button>`;
+        }
+        // 每页大小选择
+        paginationHtml += `
+                <select class="page-size-select" onchange="changePageSize(this.value)">
+                    <option value="10" ${currentQueryParams.pageSize === 10 ? 'selected' : ''}>10条</option>
+                    <option value="20" ${currentQueryParams.pageSize === 20 ? 'selected' : ''}>20条</option>
+                    <option value="50" ${currentQueryParams.pageSize === 50 ? 'selected' : ''}>50条</option>
+                    <option value="100" ${currentQueryParams.pageSize === 100 ? 'selected' : ''}>100条</option>
+                </select>
+            `;
+        document.getElementById('globalPagination').innerHTML = paginationHtml;
+    }
+    // 切换评论区域显示/隐藏
+    function toggleComments(recordId) {
+        const section = document.querySelector(`#commentsList_${recordId}`).closest('.comments-section');
+        section.classList.toggle('expanded');
+    }
+    // 切换评论表单显示/隐藏
+    function toggleCommentForm(recordId, currentDay) {
+        const form = document.getElementById(`commentForm_${recordId}`);
+        if (form.classList.contains('show')) {
+            form.classList.remove('show');
+        } else {
+            // 隐藏其他评论表单
+            document.querySelectorAll('.comment-form').forEach(f => {
+                f.classList.remove('show');
+            });
+            form.classList.add('show');
+        }
+    }
+    // 隐藏评论表单
+    function hideCommentForm(recordId) {
+        const form = document.getElementById(`commentForm_${recordId}`);
+        form.classList.remove('show');
+    }
+    // 添加每日记录评论
+    async function addDailyComment(recordId, currentDay) {
+        const commentContent = document.getElementById(`commentContent_${recordId}`).value;
+        const today = new Date().toISOString().split('T')[0];
+        if (!commentContent.trim()) {
+            showMessage('评论内容不能为空', 'error');
+            return;
+        }
+        try {
+            const response = await fetch(`${API_BASE}/daily-records/${recordId}/comments`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    currentDay: today,
+                    content: commentContent
+                })
+            });
+            if (response.ok) {
+                const result = await response.text();
+                showMessage(`评论添加成功: ${result}`, 'success');
+                // 清空评论输入框并隐藏表单，然后重新查询记录
+                document.getElementById(`commentContent_${recordId}`).value = '';
+                hideCommentForm(recordId);
+                queryDailyRecords(false);
+            } else {
+                const error = await response.json();
+                showMessage(`评论添加失败: ${error.message || '未知错误'}`, 'error');
+            }
+        } catch (error) {
+            showMessage(`请求失败: ${error.message}`, 'error');
+        }
+    }
+    // 改变页码（每日记录）
+    function changePage(pageNum) {
+        currentQueryParams.pageNum = pageNum;
+        queryDailyRecords(false);
+    }
+    // 改变每页大小（每日记录）
+    function changePageSize(pageSize) {
+        currentQueryParams.pageSize = parseInt(pageSize);
+        currentQueryParams.pageNum = 1; // 重置到第一页
+        queryDailyRecords(false);
+    }
+    // 显示消息
+    function showMessage(message, type) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = message;
+        messageDiv.className = type;
+        // 3秒后自动清除消息
+        setTimeout(() => {
+            messageDiv.textContent = '';
+            messageDiv.className = '';
+        }, 3000);
+    }
+    // 初始化
+    document.addEventListener('DOMContentLoaded', function() {
+        // Daily 页面不需要默认查询关注列表
+        // 页面加载时加载今日内容
+        loadTodayContent();
+        // 查询今日记录
+        const today = new Date().toISOString().split('T')[0];
+        currentQueryParams.startDate = today;
+        currentQueryParams.endDate = today;
+        currentQueryParams.pageNum = 1;
+        queryDailyRecords(false);
+    });
+</script>
+</body>
+</html>

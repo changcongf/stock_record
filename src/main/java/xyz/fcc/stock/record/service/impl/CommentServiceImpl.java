@@ -25,7 +25,7 @@ public class CommentServiceImpl implements CommentService {
         entity.setDailyRecordId(commentDTO.getDailyRecordId());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理");
+        entity.setInfo(null);
         return dailyCommentMapper.insertDailyComment(entity);
     }
 
@@ -37,7 +37,7 @@ public class CommentServiceImpl implements CommentService {
         entity.setCompany(commentDTO.getCompany());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理");
+        entity.setInfo(null);
 
         int result = companyCommentMapper.insertCompanyComment(entity);
 
@@ -59,7 +59,7 @@ public class CommentServiceImpl implements CommentService {
         entity.setIndustry(commentDTO.getIndustry());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理");
+        entity.setInfo(null);
 
         int result = industryCommentMapper.insertIndustryComment(entity);
 
@@ -81,7 +81,7 @@ public class CommentServiceImpl implements CommentService {
         entity.setProduct(commentDTO.getProduct());
         entity.setCurrentDay(commentDTO.getCurrentDay());
         entity.setContent(commentDTO.getContent());
-        entity.setInfo("兼容处理");
+        entity.setInfo(null);
 
         int result = productCommentMapper.insertProductComment(entity);
 
