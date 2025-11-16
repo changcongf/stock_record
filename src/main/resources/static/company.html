@@ -12,7 +12,7 @@
             background-color: #f5f5f5;
         }
         .container {
-            max-width: 1400px;
+            max-width: 1000px;
             margin: 0 auto;
             background-color: white;
             padding: 20px;
@@ -28,7 +28,7 @@
             display: flex;
             align-items: center;
             margin-bottom: 20px;
-            margin-left: 16%;
+            margin-left: 60%;
             /* 移除背景颜色和内边距 */
             /* padding: 10px; */
             /* background-color: #f8f9fa; */
@@ -43,9 +43,9 @@
             color: #333;
         }
         .header input {
-            font-size: 16px;
+            font-size: 20px;
             padding: 12px 15px;
-            border: 2px solid #ddd;
+            border: none;
             border-radius: 6px;
             outline: none;
             width: 250px;
@@ -276,18 +276,20 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+        /* 修改按钮容器为右对齐 */
         .top-controls {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end; /* 关键：右对齐 */
             align-items: flex-start;
-            margin: 0 auto 10px;
+            margin: 0 auto 10px; /* 保持水平居中，但内部右对齐 */
             width: 80%;
             max-width: 800px;
+            gap: 10px; /* 添加按钮间距 */
         }
         #companyContentInput {
             width: 80%;
             max-width: 800px;
-            margin: 0 auto 10px;
+            margin: 0 0 10px auto;
             display: block;
             font-size: 20px;
             font-weight: bold;
@@ -333,8 +335,7 @@
         <div class="left-panel">
             <!-- 标题头：公司选择 -->
             <div class="header">
-                <label>Company:</label>
-                <input type="text" id="selectedCompany" placeholder="公司名称">
+                <input type="text" id="selectedCompany" placeholder="Company">
             </div>
 
             <!-- 编辑内容区域 -->
