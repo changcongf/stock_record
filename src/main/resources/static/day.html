@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daily</title>
+    <title>Day</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -11,19 +11,22 @@
             padding: 15px; /* 减小页面内边距 */
             background-color: #f5f5f5;
         }
+
         .container {
             max-width: 800px; /* 缩小最大宽度 */
             margin: 0 auto;
             background-color: white;
             padding: 15px; /* 减小容器内边距 */
             border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
         }
+
         h1 {
             color: #333;
             text-align: center;
             margin-bottom: 15px; /* 调整标题下方间距 */
         }
+
         .header {
             display: flex;
             align-items: center;
@@ -31,12 +34,14 @@
             width: 100%; /* 使用100%宽度 */
             margin: 0 auto 5px auto; /* 居中margin */
         }
+
         .header label {
             font-size: 16px;
             font-weight: 600;
             margin-right: 15px;
             color: #333;
         }
+
         .header input {
             font-size: 20px;
             padding: 12px 15px;
@@ -47,32 +52,40 @@
             max-width: 600px; /* 设置最大宽度，使其居中时不会过宽 */
             transition: border-color 0.3s ease;
         }
+
         .header input:focus {
             border-color: #007bff;
         }
+
         .main-content {
             display: block; /* 改为单列布局 */
         }
+
         .left-panel {
             width: 100%; /* 占满宽度 */
             min-width: 0;
         }
+
         .right-panel {
             display: none; /* 隐藏右侧面板 */
         }
+
         .section {
             margin-bottom: 15px; /* 调整下方间距 */
             width: 100%;
         }
+
         .form-group {
             margin-bottom: 8px; /* 调整下方间距 */
         }
+
         label {
             display: block;
             margin-bottom: 5px;
             font-weight: bold;
             font-size: 13px;
         }
+
         input, textarea, select {
             width: 100%;
             padding: 6px;
@@ -81,6 +94,7 @@
             box-sizing: border-box;
             font-size: 13px;
         }
+
         button {
             background-color: #007bff;
             color: white;
@@ -92,17 +106,21 @@
             margin-bottom: 3px;
             font-size: 12px;
         }
+
         button:hover {
             background-color: #0056b3;
         }
+
         button.save-btn,
         button.advanced-search-btn {
             background-color: #6c757d;
         }
+
         button.save-btn:hover,
         button.advanced-search-btn:hover {
             background-color: #545b62;
         }
+
         button.comment-icon-btn,
         button.comments-toggle-btn {
             background-color: transparent;
@@ -114,11 +132,13 @@
             align-items: center;
             gap: 2px;
         }
+
         button.comment-icon-btn:hover,
         button.comments-toggle-btn:hover {
             background-color: #6c757d;
             color: white;
         }
+
         .advanced-search {
             display: none;
             margin-top: 10px;
@@ -126,9 +146,11 @@
             background-color: #e9ecef;
             border-radius: 4px;
         }
+
         .advanced-search.show {
             display: block;
         }
+
         .comment-form {
             margin-top: 10px;
             padding: 8px;
@@ -136,9 +158,11 @@
             border-radius: 4px;
             display: none;
         }
+
         .comment-form.show {
             display: block;
         }
+
         .record-item {
             border: 1px solid #eee;
             padding: 10px;
@@ -147,6 +171,7 @@
             background-color: #fafafa;
             position: relative;
         }
+
         .record-header {
             font-weight: bold;
             margin-bottom: 3px;
@@ -154,6 +179,7 @@
             display: flex;
             justify-content: space-between;
         }
+
         .record-info {
             font-size: 11px;
             color: #666;
@@ -161,22 +187,27 @@
             display: flex;
             justify-content: space-between;
         }
+
         .record-content {
             margin-bottom: 8px;
             font-size: 13px;
         }
+
         .comments-section {
             margin-top: 8px;
         }
+
         .comments-list {
             display: none;
             margin-top: 5px;
             padding-top: 5px;
             border-top: 1px solid #eee;
         }
+
         .comments-section.expanded .comments-list {
             display: block;
         }
+
         .comment-item {
             background-color: #dee2e6;
             padding: 5px;
@@ -184,20 +215,24 @@
             border-radius: 3px;
             font-size: 12px;
         }
+
         .comment-header {
             font-weight: bold;
             margin-bottom: 2px;
             display: inline;
         }
+
         .comment-info {
             font-size: 10px;
             color: #666;
             margin-bottom: 2px;
             display: inline;
         }
+
         .comment-content {
             font-size: 12px;
         }
+
         .record-actions {
             position: absolute;
             top: 10px;
@@ -206,6 +241,7 @@
             flex-direction: column;
             gap: 5px;
         }
+
         .pagination {
             text-align: center;
             margin: 15px 0;
@@ -215,6 +251,7 @@
             flex-wrap: nowrap;
             gap: 2px;
         }
+
         .pagination button {
             margin: 0;
             padding: 3px 6px;
@@ -223,19 +260,23 @@
             color: white;
             border: 1px solid #6c757d;
         }
+
         .pagination button:hover {
             background-color: #545b62;
             border-color: #545b62;
         }
+
         .pagination button[style*="background-color: #28a745"] {
             background-color: #28a745 !important;
             color: white !important;
             border-color: #28a745 !important;
         }
+
         .pagination button[style*="background-color: #28a745"]:hover {
             background-color: #218838 !important;
             border-color: #218838 !important;
         }
+
         .page-size-select {
             padding: 3px 6px;
             font-size: 11px;
@@ -246,6 +287,7 @@
             border-radius: 4px;
             box-sizing: border-box;
         }
+
         /* 修改按钮容器为居中对齐 */
         .top-controls {
             display: flex;
@@ -256,6 +298,7 @@
             max-width: 600px; /* 与编辑框最大宽度一致 */
             gap: 10px; /* 添加按钮间距 */
         }
+
         #dailyContentInput {
             width: 80%;
             max-width: 600px; /* 设置最大宽度，使其居中时不会过宽 */
@@ -266,19 +309,100 @@
             line-height: 1.6; /* 添加行间距，可根据需要调整数值 */
             letter-spacing: 0.5px; /* 字符间距，推荐值：0.3px ~ 1px */
         }
+
         .error {
             color: red;
             margin: 10px 0;
             font-size: 12px;
         }
+
         .success {
             color: green;
             margin: 10px 0;
             font-size: 12px;
         }
+
+        .hamburger-menu {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            transition: color 0.3s;
+        }
+
+        .hamburger-menu:hover {
+            color: #007bff;
+        }
+
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            right: -200px;
+            width: 200px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+            transition: right 0.3s ease;
+            z-index: 999;
+            padding-top: 60px;
+        }
+
+        .nav-overlay.show {
+            right: 0;
+        }
+
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+
+        .nav-link {
+            padding: 10px 0;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            border-bottom: 1px solid #eee;
+            transition: color 0.3s;
+        }
+
+        .nav-link:hover, .nav-link.active {
+            color: #007bff;
+            font-weight: bold;
+        }
+
+        .nav-link.active {
+            color: #28a745;
+        }
+
+        .overlay-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
     </style>
 </head>
 <body>
+<button class="hamburger-menu" onclick="toggleNav()">☰</button>
+<div class="nav-overlay" id="navOverlay">
+    <button class="overlay-close" onclick="toggleNav()">×</button>
+    <div class="nav-links">
+        <a href="day.html" class="nav-link active">Day</a>
+        <a href="company.html" class="nav-link">Company</a>
+        <a href="industry.html" class="nav-link">Industry</a>
+        <a href="product.html" class="nav-link">Product</a>
+    </div>
+</div>
 <div class="container">
     <div class="main-content">
         <!-- 左侧面板 (也是唯一面板) -->
@@ -328,6 +452,20 @@
     <div id="message"></div>
 </div>
 <script>
+    function toggleNav() {
+        document.getElementById('navOverlay').classList.toggle('show');
+    }
+
+    // 点击外部区域关闭导航
+    document.addEventListener('click', function (event) {
+        const navOverlay = document.getElementById('navOverlay');
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        if (navOverlay.classList.contains('show') &&
+            !navOverlay.contains(event.target) &&
+            !hamburgerMenu.contains(event.target)) {
+            navOverlay.classList.remove('show');
+        }
+    });
     const API_BASE = 'http://localhost:8080/api';
     // Daily 页面不使用关注列表，移除 selectedAttention 变量
     let currentQueryParams = {
@@ -337,15 +475,6 @@
         endDate: '',
         content: ''
     };
-    // Daily 页面不使用关注列表，移除 attentionPageParams 变量
-
-    // 移除 toggleAttentionForm 函数
-    // 移除 hideAttentionForm 函数
-    // 移除 addAttention 函数
-    // 移除 queryAttentions 函数
-    // 移除 displayAttentions 函数
-    // 移除 selectAttention 函数
-    // 移除 changeAttentionPage 函数
 
     // 切换高级搜索显示/隐藏
     function toggleAdvancedSearch() {
@@ -356,6 +485,7 @@
             form.classList.add('show');
         }
     }
+
     // 隐藏高级搜索
     function hideAdvancedSearch() {
         const form = document.getElementById('advancedSearchForm');
@@ -369,6 +499,7 @@
         currentQueryParams.content = '';
         queryDailyRecords(false);
     }
+
     // 保存每日记录
     async function saveDailyRecord() {
         const content = document.getElementById('dailyContentInput').value;
@@ -406,6 +537,7 @@
             showMessage(`请求失败: ${error.message}`, 'error');
         }
     }
+
     // 查询今日每日记录（用于编辑时预填充内容）
     async function loadTodayContent() {
         const today = new Date().toISOString().split('T')[0];
@@ -431,6 +563,7 @@
             console.error('加载今日内容失败:', error);
         }
     }
+
     // 查询每日记录
     async function queryDailyRecords(isAdvancedSearch) {
         const params = new URLSearchParams({
@@ -461,6 +594,7 @@
             showMessage(`请求失败: ${error.message}`, 'error');
         }
     }
+
     // 显示每日记录
     function displayDailyRecords(data) {
         const container = document.getElementById('dailyRecordsList');
@@ -537,11 +671,13 @@
             `;
         document.getElementById('globalPagination').innerHTML = paginationHtml;
     }
+
     // 切换评论区域显示/隐藏
     function toggleComments(recordId) {
         const section = document.querySelector(`#commentsList_${recordId}`).closest('.comments-section');
         section.classList.toggle('expanded');
     }
+
     // 切换评论表单显示/隐藏
     function toggleCommentForm(recordId, currentDay) {
         const form = document.getElementById(`commentForm_${recordId}`);
@@ -555,11 +691,13 @@
             form.classList.add('show');
         }
     }
+
     // 隐藏评论表单
     function hideCommentForm(recordId) {
         const form = document.getElementById(`commentForm_${recordId}`);
         form.classList.remove('show');
     }
+
     // 添加每日记录评论
     async function addDailyComment(recordId, currentDay) {
         const commentContent = document.getElementById(`commentContent_${recordId}`).value;
@@ -594,17 +732,20 @@
             showMessage(`请求失败: ${error.message}`, 'error');
         }
     }
+
     // 改变页码（每日记录）
     function changePage(pageNum) {
         currentQueryParams.pageNum = pageNum;
         queryDailyRecords(false);
     }
+
     // 改变每页大小（每日记录）
     function changePageSize(pageSize) {
         currentQueryParams.pageSize = parseInt(pageSize);
         currentQueryParams.pageNum = 1; // 重置到第一页
         queryDailyRecords(false);
     }
+
     // 显示消息
     function showMessage(message, type) {
         const messageDiv = document.getElementById('message');
@@ -616,8 +757,9 @@
             messageDiv.className = '';
         }, 3000);
     }
+
     // 初始化
-    document.addEventListener('DOMContentLoaded', function() {
+    document.addEventListener('DOMContentLoaded', function () {
         // Daily 页面不需要默认查询关注列表
         // 页面加载时加载今日内容
         loadTodayContent();

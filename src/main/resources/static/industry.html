@@ -323,9 +323,94 @@
             margin: 10px 0;
             font-size: 12px;
         }
+        .hamburger-menu {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            z-index: 1000;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #666;
+            transition: color 0.3s;
+        }
+        .hamburger-menu:hover {
+            color: #007bff;
+        }
+        .nav-overlay {
+            position: fixed;
+            top: 0;
+            right: -200px;
+            width: 200px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 10px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 999;
+            padding-top: 60px;
+        }
+        .nav-overlay.show {
+            right: 0;
+        }
+        .nav-links {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+        }
+        .nav-link {
+            padding: 10px 0;
+            text-decoration: none;
+            color: #333;
+            font-size: 16px;
+            border-bottom: 1px solid #eee;
+            transition: color 0.3s;
+        }
+        .nav-link:hover, .nav-link.active {
+            color: #007bff;
+            font-weight: bold;
+        }
+        .nav-link.active {
+            color: #28a745;
+        }
+        .overlay-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #666;
+        }
     </style>
 </head>
 <body>
+<button class="hamburger-menu" onclick="toggleNav()">☰</button>
+<div class="nav-overlay" id="navOverlay">
+    <button class="overlay-close" onclick="toggleNav()">×</button>
+    <div class="nav-links">
+        <a href="day.html" class="nav-link">Day</a>
+        <a href="company.html" class="nav-link">Company</a>
+        <a href="industry.html" class="nav-link active">Industry</a>
+        <a href="product.html" class="nav-link">Product</a>
+    </div>
+</div>
+
+<script>
+    function toggleNav() {
+        document.getElementById('navOverlay').classList.toggle('show');
+    }
+    document.addEventListener('click', function(event) {
+        const navOverlay = document.getElementById('navOverlay');
+        const hamburgerMenu = document.querySelector('.hamburger-menu');
+        if (navOverlay.classList.contains('show') &&
+            !navOverlay.contains(event.target) &&
+            !hamburgerMenu.contains(event.target)) {
+            navOverlay.classList.remove('show');
+        }
+    });
+</script>
 <div class="container">
     <div class="main-content">
         <!-- 左侧面板 -->
