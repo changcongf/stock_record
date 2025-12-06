@@ -1218,7 +1218,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="record-content">${record.content}</div>
+                            <div class="record-content">${record.content.replace(/\n/g, '<br>')}</div>
                             ${record.comments && record.comments.length > 0 ? `
                             <div class="record-comments">
                                 <small class="text-muted">评论 (${record.comments.length})</small>
@@ -1482,7 +1482,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div class="record-content">${record.content}</div>
+                            <div class="record-content">${record.content.replace(/\n/g, '<br>')}</div>
                             ${record.comments && record.comments.length > 0 ? `
                             <div class="record-comments">
                                 <small class="text-muted">评论 (${record.comments.length})</small>

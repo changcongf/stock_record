@@ -97,20 +97,20 @@ CREATE TABLE `t_industry_comment`
     `info`        text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                  `idx_industry_record_id` (`industry_record_id`),
-    UNIQUE KEY `uk_industry_day` (`industry`, `current_day`, industry_record_id`)
+    UNIQUE KEY `uk_industry_day` (`industry`, `current_day`, `industry_record_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 DROP TABLE IF EXISTS `t_product_comment`;
 CREATE TABLE `t_product_comment`
 (
     `id`                bigint unsigned NOT NULL AUTO_INCREMENT,
-    `product_record_id` bigint unsigned NOT NULL COMMENT '关联 t_product_record.id',
-    `product`           varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '公司名称或标识',
+    `product_record_id` bigint unsigned NOT NULL,
+    `product`           varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL,
     `current_day`       date                                    NOT NULL,
     `content`           text COLLATE utf8mb4_unicode_ci         NOT NULL,
     `create_time`       datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time`       datetime                                NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-    `info`        text COLLATE utf8mb4_unicode_ci,
+    `info`              text COLLATE utf8mb4_unicode_ci,
     PRIMARY KEY (`id`),
     KEY                 `idx_product_record_id` (`product_record_id`),
     UNIQUE KEY `uk_product_day` (`product`, `current_day`, `product_record_id`)
@@ -121,7 +121,7 @@ CREATE TABLE `t_attention`
 (
     `id`          bigint unsigned NOT NULL AUTO_INCREMENT,
     `name`        varchar(255) NOT NULL COMMENT '名字',
-    `type`        varchar(255) NOT NULL COMMENT '类型,包含industy, company, product',
+    `type`        varchar(255) NOT NULL COMMENT '类型,包含industry, company, product',
     `create_time` datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `update_time` datetime     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `times`       int          NOT NULL COMMENT '次数',

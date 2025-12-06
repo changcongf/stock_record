@@ -558,7 +558,7 @@
                         <div class="record-header">
                             <span>${record.currentDay}  ${record.info || ''}</span> <!-- 日期和info字段合并，用两个空格分隔 -->
                         </div>
-                        <div class="record-content">${record.content}</div>
+                        <div class="record-content">${record.content.replace(/\n/g, '<br>')}</div>
                         <!-- 记录右侧操作区 -->
                         <div class="record-actions">
                             <button class="comment-icon-btn" onclick="toggleCommentForm(${record.id}, '${record.product}', '${record.currentDay}')">💬</button>
